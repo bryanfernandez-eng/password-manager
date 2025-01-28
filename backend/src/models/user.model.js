@@ -28,13 +28,13 @@ const savedPasswordSchema = new mongoose.Schema(
 
 const userSchema = new mongoose.Schema(
   {
-    fullName: {
+    name: {
       type: String,
       required: true,
     },
     username: {
       type: String,
-      required: true,
+      // required: true,
     },
     email: {
       type: String,
