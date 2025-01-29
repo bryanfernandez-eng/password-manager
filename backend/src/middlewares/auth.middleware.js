@@ -17,22 +17,18 @@ export const protectRoute = async (req, res, next) => {
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch (error) {
-      return res
-        .status(401)
-        .json({
-          success: false,
-          message: "Not authorized, token is invalid or expired",
-        });
+      return res.status(401).json({
+        success: false,
+        message: "Not authorized, token is invalid or expired",
+      });
     }
 
     // Check if token payload contains userId
     if (!decoded.userId) {
-      return res
-        .status(401)
-        .json({
-          success: false,
-          message: "Not authorized, invalid token payload",
-        });
+      return res.status(401).json({
+        success: false,
+        message: "Not authorized, invalid token payload",
+      });
     }
 
     const user = await User.findById(decoded.userId).select("-password");

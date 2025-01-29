@@ -58,6 +58,12 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    if (req.cookies.jwt) {
+      return res
+        .status(200)
+        .json({ success: false, message: "Already logged in" });
+    }
+
     // check if user missed inputting a required field
     if (!email || !password) {
       return res.status(400).json({ msg: "Please fill all fields" });
@@ -103,10 +109,34 @@ export const logout = async (req, res) => {
   }
 };
 
-// Check Authentication
+// Delete Account
+export const deleteAccount = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Not authorized, user not found" });
+    }
+    const user = await User.findByIdAndDelete(req.user._id);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    res.cookie("jwt", "", { maxAge: 0 });
+
+    return res.status(200).json({ success: true, message: "Account deleted" });
+  } catch (error) {
+    console.error("Error in deleteAccount controller: ", error.message);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+// Check authentication
 export const checkAuth = async (req, res) => {
   try {
-    // check if JWT cookie exists and is valid
     return res.status(200).json(req.user);
   } catch (error) {
     console.log("Error in checkAuth controller:", error.message);
