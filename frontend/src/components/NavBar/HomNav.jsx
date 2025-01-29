@@ -16,8 +16,8 @@ const Navbar = () => {
   const { isOpen,onOpen, onClose } = useDisclosure();
   const location = useLocation(); // Get the current location
 
-  const centerLinks = ["Home", "Generate Password", "My Passwords"];
-  const rightLinks = ["Settings", "Logout"];
+  const centerLinks = [];
+  const rightLinks = ["Settings", "Login"];
 
   const NavLink = ({ children }) => {
     // Generate the href dynamically
