@@ -1,10 +1,15 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
-import { generateToken } from "../lib/utils.js";
+import { generateToken } from "../lib/generalToken.js";
+import { sendVerifcationEmail } from "../lib/sendEmail.js";
+import { generateVerificationCode } from "../lib/generateVerificationCode.js";
 
-// Signup
+let unverifiedUsers = {};
+
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
+
+  const verificationCode = generateVerificationCode();
 
   try {
     // check if user missed inputting a required field
@@ -34,12 +39,60 @@ export const signup = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = new User({ name, email, password: hashedPassword });
+    unverifiedUsers[email] = {
+      email,
+      name,
+      password: hashedPassword,
+      verificationCode,
+      createdAt: Date.now(),
+    };
+
+    await sendVerifcationEmail(verificationCode, email);
+
+    return res.status(200).json({
+      succes: true,
+      message: `Verification code send to ${email}. Code experies in 5 minutes.`,
+    });
+  } catch (error) {
+    console.error("Error in signup controller: ", error.message);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const verifyCode = async (req, res) => {
+  const { email, verificationCode } = req.body;
+
+  try {
+    const unverifiedUser = unverifiedUsers[email];
+
+    if (
+      !unverifiedUser ||
+      unverifiedUser.verificationCode !== verificationCode
+    ) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid verification code" });
+    }
+
+    const expirationTime = 5 * 60 * 1000;
+    if (Date.now() - unverifiedUser.createdAt > expirationTime) {
+      delete unverifiedUsers[email]; // Remove expired user data
+      return res
+        .status(400)
+        .json({ success: false, message: "Verification code has expired" });
+    }
+
+    const newUser = new User({
+      name: unverifiedUser.name,
+      email: unverifiedUser.email,
+      password: unverifiedUser.password,
+    });
 
     // save user to the database and generate JWT token
     if (newUser) {
       generateToken(newUser._id, res);
       await newUser.save();
+      delete unverifiedUsers[email];
 
       return res.status(200).json({ succes: true, message: newUser });
     } else {
@@ -48,7 +101,7 @@ export const signup = async (req, res) => {
         .json({ success: false, message: "Invalid user data" });
     }
   } catch (error) {
-    console.error("Error in signup controller: ", error.message);
+    console.error("Error in verifyCode controller: ", error.message);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
