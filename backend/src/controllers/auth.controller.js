@@ -196,3 +196,42 @@ export const checkAuth = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error." });
   }
 };
+
+// Update account
+export const updateAccount = async (req, res) => {
+  const { name, password } = req.body;
+
+  try {
+    if (!req.user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Not authorized, user not found" });
+    }
+
+    if (!name && !password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Please fill in atleast one field" });
+    }
+
+    const updateFields = {};
+
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      updateFields.password = await bcrypt.hash(password, salt);
+    }
+
+    if (name) {
+      updateFields.name = name;
+    }
+
+    const user = await User.findByIdAndUpdate(req.user._id, updateFields, {
+      new: true,
+    }).select("-password");
+
+    return res.status(200).json({ success: true, message: user });
+  } catch (error) {
+    console.error("Error in updateAccount controller: ", error.message);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
