@@ -17,10 +17,10 @@ export const sendVerifcationEmail = async (verificationCode, email) => {
     html: `<p>Your verification code is: <strong>${verificationCode}</strong></p>`,
   };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      return console.error("Error in sending email: ", error.message);
-    }
+  try {
+    const info = await transporter.sendMail(mailOptions);
     console.log("Email sent: " + info.response);
-  });
+  } catch (error) {
+    return console.error("Error in sending email: ", error.message);
+  }
 };

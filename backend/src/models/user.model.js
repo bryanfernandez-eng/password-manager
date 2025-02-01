@@ -17,6 +17,7 @@ const savedPasswordSchema = new mongoose.Schema(
       required: [true, "Email is required"],
       lowercase: true,
       trim: true,
+    
       validate: [isEmail, "Invalid Email"],
     },
     password: {
@@ -43,10 +44,7 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
       validate: [isEmail, "Invalid Email"],
-    },
-    profilePictureUrl: {
-      type: String,
-      default: " ",
+      unique: true,
     },
     password: {
       type: String,
