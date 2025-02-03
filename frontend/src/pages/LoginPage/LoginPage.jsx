@@ -1,27 +1,35 @@
-import{Box,Heading,Center,Button,FormControl,Input,Link} from "@chakra-ui/react"
+import{Box,Heading,Center,Button,FormControl,Input,Link, Stack} from "@chakra-ui/react"
 import{ViewIcon,ViewOffIcon} from "@chakra-ui/icons"
 import{useState} from "react"
 function LoginPage() {
   return (
-    <Center h="100vh" bg="gray.100">
-      <Box bg="white" p="6" rounded="md" shadow="md" w= "sm">
-          <FormControl>
-         <Heading marginLeft={120}>Login</Heading>
-         <p marginLeft> Username</p>
-          <Input type="Username" placeholder="Enter your Username">
+    <form onSubmit={(e) => e.preventDefault()}>
+<Center h="100vh">
+      <Box borderRightWidth={3} borderRightColor="blue.400"
+      bg="gray.400" p={20} rounded="lg" padding={50} h="500">
+      <Heading marginTop={6} fontSize={15} marginLeft={12}>Sign in to your account</Heading>
+          <FormControl marginTop={6}>
+         <p> Email</p>
+          <Input borderTopColor="blue.400" borderTopWidth={3} 
+          bg="white" type="Email" placeholder="Enter your email address">
           </Input>
          </FormControl>
-          <FormControl>
-            <p marginLeft>password</p>
-             <Input type="password" placeholder="Enter your password">
+          <FormControl marginTop={6}>
+            <p marginLeft>Password</p>
+             <Input borderTopColor="blue.400" borderTopWidth={3} 
+             bg="white" type="password" placeholder="Enter your password">
              </Input>
          </FormControl>
-            <p>Forgot password?<Link color="Blue"> Reset Password </Link></p>
-          <Button marginCenter={1} h="25px" w="340px">Login</Button>
-          <Button h="25px" w="340px"> Create An Account</Button>
+         <Stack>
+         <p>Forgot password?<Link color="blue.500"> Reset Password </Link></p>
+          <Button marginTop={6} marginCenter={1} h="50px" w="340px" 
+          bg="blue" color={"blackAlpha.800"} fontSize={39}>Log In</Button>
+          <Button marginTop={6} marginCenter={1} h="50px" w="340px" 
+          bg="white" color={"blackAlpha.800"} fontSize={30}>Create new account</Button>
+         </Stack>
       </Box>
     </Center>
-    
+    </form>
   )
 }
 

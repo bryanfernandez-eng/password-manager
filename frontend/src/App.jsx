@@ -5,19 +5,22 @@ import NavBar from "./components/NavBar/NavBar";
 import SignupPage from "./pages/SignupPage/SignupPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import { ChakraProvider } from "@chakra-ui/react";
-import{Box} from "@chakra-ui/react";
-
+import{Box,extendTheme,CSSReset} from "@chakra-ui/react";
+const theme= extendTheme({
+  styles:{
+    global:{
+      body:{
+        bg:"black"
+      }
+    }
+  }
+})
 function App() {
   const location = useLocation(); // Get current route
   console.log("Current Path:", location.pathname); // Debugging: check current path
 
-  // Only hide navbar on /login page
-  const shouldHideNavbar = location.pathname === "/login";
-  console.log("Should hide navbar:", shouldHideNavbar);
-
-
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <NavBar/>
       <Routes>
           <Route path="/" element={<HomePage />} />
