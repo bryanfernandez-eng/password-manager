@@ -1,31 +1,52 @@
 import{Box,Heading,Center,Button,FormControl,Input,Link, Stack} from "@chakra-ui/react"
 import{ViewIcon,ViewOffIcon} from "@chakra-ui/icons"
 import{useState} from "react"
+import{useNavigate} from "react-router-dom"
 function LoginPage() {
+  const[email,setEmail]=useState("");
+  const[password,setPassword]= useState("");
+  const navigate=useNavigate();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const response = await fetch('http://localhost:5000/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      // Login successful, redirect to dashboard
+      navigate("/passwords");
+    } else {
+      // Show error message
+      alert(data.message);
+    }
+  };
   return (
-    <form onSubmit={(e) => e.preventDefault()}>
+    <form onSubmit={handleSubmit}>
 <Center h="100vh">
-      <Box borderRightWidth={3} borderRightColor="blue.400"
-      bg="gray.400" p={20} rounded="lg" padding={50} h="500">
-      <Heading marginTop={6} fontSize={15} marginLeft={12}>Sign in to your account</Heading>
-          <FormControl marginTop={6}>
-         <p> Email</p>
-          <Input borderTopColor="blue.400" borderTopWidth={3} 
-          bg="white" type="Email" placeholder="Enter your email address">
+      <Box bg="gray.900" p={20} rounded="lg" padding={50} h="500">
+      <Heading marginTop={-10} fontSize={30} marginLeft={120} color={"white"}>Login</Heading>
+          <FormControl marginTop={6} color="white">
+         <h2 > Email</h2>
+          <Input bg="black" type="Email" fontColor="White" placeholder="Enter your email address">
           </Input>
          </FormControl>
-          <FormControl marginTop={6}>
+          <FormControl marginTop={6} color="white">
             <p marginLeft>Password</p>
-             <Input borderTopColor="blue.400" borderTopWidth={3} 
-             bg="white" type="password" placeholder="Enter your password">
+             <Input  bg="white"  type="Password" fontColor="white" placeholder="Enter your password">
              </Input>
          </FormControl>
-         <Stack>
-         <p>Forgot password?<Link color="blue.500"> Reset Password </Link></p>
+         <Stack color={"white"}>
           <Button marginTop={6} marginCenter={1} h="50px" w="340px" 
-          bg="blue" color={"blackAlpha.800"} fontSize={39}>Log In</Button>
-          <Button marginTop={6} marginCenter={1} h="50px" w="340px" 
-          bg="white" color={"blackAlpha.800"} fontSize={30}>Create new account</Button>
+          bg="black" color={"white"} fontSize={38}>Log In</Button>
+          <p>Need an account?<Link color="blue"> Sign up </Link></p>
+          <p>Forgot password?<Link color="blue"> Reset Password </Link></p>
          </Stack>
       </Box>
     </Center>
