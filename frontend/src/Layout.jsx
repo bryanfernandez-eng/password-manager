@@ -17,8 +17,8 @@ const theme= extendTheme({
   }
 })
 function App() {
-  const location = useLocation(); // Get current route
-  console.log("Current Path:", location.pathname); // Debugging: check current path
+  const location = useLocation(); 
+  console.log("Current Path:", location.pathname); 
 
   return (
     <ChakraProvider theme={theme}>

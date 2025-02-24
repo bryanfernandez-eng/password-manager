@@ -38,7 +38,7 @@ function LoginPage() {
           </Input>
          </FormControl>
           <FormControl marginTop={6} color="white">
-            <p marginLeft>Password</p>
+            <p>Password</p>
              <Input  bg="white"  type="Password" fontColor="white" placeholder="Enter your password">
              </Input>
          </FormControl>

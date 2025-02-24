@@ -1,240 +1,129 @@
-import { User } from "../models/user.model.js";
-import bcrypt from "bcrypt";
-import { generateToken } from "../lib/generalToken.js";
-import { sendVerifcationEmail } from "../lib/sendEmail.js";
-import { generateVerificationCode } from "../lib/generateVerificationCode.js";
+import React, { createContext, useState, useEffect, useContext, useMemo, useCallback } from "react";
+import { backend } from "../services/backend";
 
-let unverifiedUsers = {}; 
+const UserContext = createContext();
 
-export const signup = async (req, res) => {
-  const { name, email, password } = req.body;
+const useUserContextState = () => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const verificationCode = generateVerificationCode();
+  const handleError = useCallback((error, defaultMessage) => ({
+    success: false,
+    error: error.response?.data?.message || defaultMessage,
+  }), []);
 
-  try {
-    // check if user missed inputting a required field
-    if (!name || !email || !password) {
-      return res.status(400).json({ msg: "Please fill all fields" });
+  const login = useCallback(async (email, password) => {
+    try {
+      const response = await backend.post("/auth/login", { email, password });
+      setUser(response.data.message);
+      return { success: true };
+    } catch (error) {
+      console.error("Login error:", error);
+      return handleError(error, "An error occurred during login");
     }
+  }, [handleError]);
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    // check if email is in valid format
-    if (!emailRegex.test(email)) {
-      return res
-        .status(400)
-        .json({ success: false, msg: "Invalid email format" });
+  const logout = useCallback(async () => {
+    try {
+      await backend.post("/auth/logout");
+      setUser(null);
+      return { success: true };
+    } catch (error) {
+      console.error("Logout error:", error);
+      return handleError(error, "An error occurred during logout");
     }
+  }, [handleError]);
 
-    const existingUser = await User.findOne({ email });
-
-    // check if user already exists
-    if (existingUser) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Email already exists" });
+  const signup = useCallback(async (name, email, password) => {
+    try {
+      const response = await backend.post("/auth/signup", { name, email, password });
+      return { success: true, message: response.data.message };
+    } catch (error) {
+      console.error("Signup error:", error);
+      return handleError(error, "An error occurred during signup");
     }
+  }, [handleError]);
 
-    // hash the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+  const verifyCode = useCallback(async (email, verificationCode) => {
+    try {
+      const response = await backend.post("/auth/verify", { email, verificationCode });
+      setUser(response.data.message);
+      return { success: true };
+    } catch (error) {
+      console.error("Verification error:", error);
+      return handleError(error, "An error occurred during verification");
+    }
+  }, [handleError]);
 
-    unverifiedUsers[email] = {
-      email,
-      name,
-      password: hashedPassword,
-      verificationCode,
-      createdAt: Date.now(),
-    };
+  const checkAuth = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await backend.get("/auth/check");
+      setUser(response.data);
+      return { success: true };
+    } catch (error) {
+      console.error("Auth check error:", error);
+      setUser(null);
+      return handleError(error, "Authentication failed");
+    } finally {
+      setLoading(false);
+    }
+  }, [handleError]);
 
-    await sendVerifcationEmail(verificationCode, email);
+  const deleteAccount = useCallback(async () => {
+    try {
+      await backend.delete("/auth/delete");
+      setUser(null);
+      return { success: true };
+    } catch (error) {
+      console.error("Delete account error:", error);
+      return handleError(error, "An error occurred while deleting the account");
+    }
+  }, [handleError]);
 
-    return res.status(200).json({
-      succes: true,
-      message: `Verification code send to ${email}. Code experies in 5 minutes.`,
-    });
-  } catch (error) {
-    console.error("Error in signup controller: ", error.message);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
+  const updateAccount = useCallback(async (name, password) => {
+    try {
+      const response = await backend.put("/auth/update", { name, password });
+      setUser(response.data.message);
+      return { success: true };
+    } catch (error) {
+      console.error("Update account error:", error);
+      return handleError(error, "An error occurred while updating the account");
+    }
+  }, [handleError]);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  useEffect(() => {
+    console.log("User state updated:", user);
+  }, [user]);
+
+  return useMemo(() => ({ 
+    user, 
+    login, 
+    logout, 
+    signup,
+    verifyCode,
+    checkAuth, 
+    deleteAccount,
+    updateAccount,
+    loading 
+  }), [user, login, logout, signup, verifyCode, checkAuth, deleteAccount, updateAccount, loading]);
 };
 
-export const verifyCode = async (req, res) => {
-  const { email, verificationCode } = req.body;
-
-  try {
-    const unverifiedUser = unverifiedUsers[email];
-
-    if (
-      !unverifiedUser ||
-      unverifiedUser.verificationCode !== verificationCode
-    ) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid verification code" });
-    }
-
-    const expirationTime = 5 * 60 * 1000;
-    if (Date.now() - unverifiedUser.createdAt > expirationTime) {
-      delete unverifiedUsers[email]; // Remove expired user data
-      return res
-        .status(400)
-        .json({ success: false, message: "Verification code has expired" });
-    }
-
-    const newUser = new User({
-      name: unverifiedUser.name,
-      email: unverifiedUser.email,
-      password: unverifiedUser.password,
-    });
-
-    // save user to the database and generate JWT token
-    if (newUser) {
-      generateToken(newUser._id, res);
-      await newUser.save();
-      delete unverifiedUsers[email];
-
-      return res.status(200).json({ succes: true, message: newUser });
-    } else {
-      return res
-        .status(404)
-        .json({ success: false, message: "Invalid user data" });
-    }
-  } catch (error) {
-    console.error("Error in verifyCode controller: ", error.message);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
+export const UserProvider = ({ children }) => {
+  const userContext = useUserContextState();
+  return (
+    <UserContext.Provider value={userContext}>{children}</UserContext.Provider>
+  );
 };
 
-// Login
-export const login = async (req, res) => {
-  const { email, password } = req.body;
-
-  console.log(email, password);
-
-  try {
-    if (req.cookies.jwt) {
-      return res
-        .status(200)
-        .json({ success: false, message: "Already logged in" });
-    }
-
-    // check if user missed inputting a required field
-    if (!email || !password) {
-      return res.status(400).json({ msg: "Please fill all fields" });
-    }
-
-    const user = await User.findOne({ email });
-
-    // check if user does not exist
-    if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Invalid Credentials" });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    // check if password is incorrect
-    if (!isMatch) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Invalid Credentials" });
-    }
-
-    // generate JWT token
-    generateToken(user._id, res);
-
-    
-    return res.status(200).json({ success: true, message: user });
-  } catch (error) {
-    console.error("Error in login controller: ", error.message);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (context === undefined) {
+    throw new Error("useUser must be used within a UserProvider");
   }
-};
-
-// Logout
-export const logout = async (req, res) => {
-  try {
-    // destroy the JWT cookie when user logs out
-    res.cookie("jwt", "", { maxAge: 0 });
-    return res.status(200).json({ success: true, message: "Logged out" });
-  } catch (error) {
-    console.error("Error in login controller: ", error.message);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
-};
-
-// Delete Account
-export const deleteAccount = async (req, res) => {
-  try {
-    if (!req.user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Not authorized, user not found" });
-    }
-    const user = await User.findByIdAndDelete(req.user._id);
-
-    if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
-    }
-
-    res.cookie("jwt", "", { maxAge: 0 });
-
-    return res.status(200).json({ success: true, message: "Account deleted" });
-  } catch (error) {
-    console.error("Error in deleteAccount controller: ", error.message);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
-};
-
-// Check authentication
-export const checkAuth = async (req, res) => {
-  try {
-    return res.status(200).json(req.user);
-  } catch (error) {
-    console.log("Error in checkAuth controller:", error.message);
-    res.status(500).json({ success: false, message: "Internal server error." });
-  }
-};
-
-// Update account
-export const updateAccount = async (req, res) => {
-  const { name, password } = req.body;
-
-  try {
-    if (!req.user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Not authorized, user not found" });
-    }
-
-    if (!name && !password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Please fill in atleast one field" });
-    }
-
-    const updateFields = {};
-
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      updateFields.password = await bcrypt.hash(password, salt);
-    }
-
-    if (name) {
-      updateFields.name = name;
-    }
-
-    const user = await User.findByIdAndUpdate(req.user._id, updateFields, {
-      new: true,
-    }).select("-password");
-
-    return res.status(200).json({ success: true, message: user });
-  } catch (error) {
-    console.error("Error in updateAccount controller: ", error.message);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
+  return context;
 };
