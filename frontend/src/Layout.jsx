@@ -1,11 +1,12 @@
-import { Form, Route, Routes, useLocation } from "react-router-dom";
-import HomePage from "./pages/HomePage/HomePage";
-import PasswordPage from "./pages/PasswordPage/PasswordPage";
-import NavBar from "./components/NavBar/NavBar";
-import SignupPage from "./pages/SignupPage/SignupPage";
-import LoginPage from "./pages/LoginPage/LoginPage";
+import {Route, Routes, useLocation } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import PasswordPage from "./pages/PasswordPage";
+import NavBar from "./components/NavBar";
+import SignupPage from "./pages/SignupPage";
+import LoginPage from "./pages/LoginPage";
 import { ChakraProvider } from "@chakra-ui/react";
-import{Box,extendTheme,CSSReset} from "@chakra-ui/react";
+import{extendTheme} from "@chakra-ui/react";
+
 const theme= extendTheme({
   styles:{
     global:{
