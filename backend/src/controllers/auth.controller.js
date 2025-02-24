@@ -4,7 +4,7 @@ import { generateToken } from "../lib/generalToken.js";
 import { sendVerifcationEmail } from "../lib/sendEmail.js";
 import { generateVerificationCode } from "../lib/generateVerificationCode.js";
 
-let unverifiedUsers = {};
+let unverifiedUsers = {}; 
 
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -23,7 +23,7 @@ export const signup = async (req, res) => {
     if (!emailRegex.test(email)) {
       return res
         .status(400)
-        .json({ succes: false, msg: "Invalid email format" });
+        .json({ success: false, msg: "Invalid email format" });
     }
 
     const existingUser = await User.findOne({ email });
@@ -32,7 +32,7 @@ export const signup = async (req, res) => {
     if (existingUser) {
       return res
         .status(400)
-        .json({ succes: false, message: "Email already exists" });
+        .json({ success: false, message: "Email already exists" });
     }
 
     // hash the password
@@ -110,6 +110,8 @@ export const verifyCode = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
+  console.log(email, password);
+
   try {
     if (req.cookies.jwt) {
       return res
@@ -143,6 +145,7 @@ export const login = async (req, res) => {
     // generate JWT token
     generateToken(user._id, res);
 
+    
     return res.status(200).json({ success: true, message: user });
   } catch (error) {
     console.error("Error in login controller: ", error.message);

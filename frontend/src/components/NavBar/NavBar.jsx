@@ -13,7 +13,7 @@ import { useLocation } from "react-router-dom"; // Import useLocation
 import { Link as RouterLink } from "react-router-dom"; // Import React Router's Link
 
 const Navbar = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen,onOpen, onClose } = useDisclosure();
   const location = useLocation(); // Get the current location
 
   const centerLinks = ["Home", "Generate Password", "My Passwords"];
