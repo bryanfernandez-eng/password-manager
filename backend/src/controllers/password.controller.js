@@ -42,7 +42,6 @@ export const addPassword = async (req, res) => {
     }
 }; 
 
-// not done
 export const editPassword = async (req, res) => {
     try {
         
@@ -59,6 +58,7 @@ export const deletePassword = async (req, res) => {
     try {
 
         if (!siteName || !email) {
+
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
 
