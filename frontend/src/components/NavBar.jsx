@@ -13,7 +13,7 @@ import { useLocation } from "react-router-dom"; // Import useLocation
 import { Link as RouterLink } from "react-router-dom"; // Import React Router's Link
 
 const Navbar = () => {
-  const { isOpen,onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const location = useLocation(); // Get the current location
 
   const centerLinks = ["Home", "Generate Password", "My Passwords"];
@@ -35,8 +35,8 @@ const Navbar = () => {
         py={1}
         rounded={"md"}
         href={href}
-        bg={isActive ? "whiteAlpha.700" : "transparent"} // Highlight active link
-        color={isActive ? "blackAlpha.800" : "gray.300"} // Change text color for active link
+        bg={isActive ? "gray.300" : "transparent"} // Highlight active link
+        color={isActive ? "gray.800" : "gray.300"} // Change text color for active link
         _hover={{
           textDecoration: "none",
           bg: "whiteAlpha.200",
@@ -49,32 +49,31 @@ const Navbar = () => {
   };
 
   return (
-    <Box backgroundColor="blackAlpha.900" px={10}>
+    <Box backgroundColor="black" px={10} marginTop={1}>
       <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
         <Link
           href="/"
           _hover={{
             textDecoration: "none",
-            backgroundColor: "whiteAlpha.400",
           }}
         >
           <Box
-            color="whiteAlpha.900"
+            color="gray.300"
             fontWeight="bold"
-            backgroundColor="whiteAlpha.300"
-            py={1}
-            px={2}
+            backgroundColor="gray.900"
+            py={2}
+            px={4}
+            fontSize={20}
             rounded={"md"}
+            _hover={{
+              textDecoration: "none",
+              bgColor: "gray.700",
+            }}
           >
             Password Manager
           </Box>
         </Link>
-        <HStack
-          as={"nav"}
-          spacing={4}
-          display={{ base: "none", md: "flex" }}
-          color="whiteAlpha.900"
-        >
+        <HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
           {centerLinks.map((link) => (
             <NavLink key={link}>{link}</NavLink>
           ))}
@@ -84,7 +83,7 @@ const Navbar = () => {
           as={"nav"}
           spacing={4}
           display={{ base: "none", md: "flex" }}
-          color="whiteAlpha.900"
+          color="gray.300"
         >
           {rightLinks.map((link) => (
             <NavLink key={link}>{link}</NavLink>

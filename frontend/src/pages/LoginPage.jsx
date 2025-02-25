@@ -1,57 +1,108 @@
-import{Box,Heading,Center,Button,FormControl,Input,Link, Stack} from "@chakra-ui/react"
-import{ViewIcon,ViewOffIcon} from "@chakra-ui/icons"
-import{useState} from "react"
-import{useNavigate} from "react-router-dom"
+import {
+  Heading,
+  Button,
+  FormControl,
+  Input,
+  Link,
+  Stack,
+  Flex,
+  FormLabel,
+  Container,
+  Text,
+} from "@chakra-ui/react";
+
+import { useState, useContext } from "react";
+import { useUser } from "../context/UserContext";
+
 function LoginPage() {
-  const[email,setEmail]=useState("");
-  const[password,setPassword]= useState("");
-  const navigate=useNavigate();
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { login } = useUser();
 
-    const response = await fetch('http://localhost:5000/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
+  const handleSubmit = async () => {
+    if (!password || !email) {
+      alert("All Fields Must Be Filled In.");
+      return;
+    }
 
-    const data = await response.json();
-
-    if (response.ok) {
-      // Login successful, redirect to dashboard
-      navigate("/passwords");
-    } else {
-      // Show error message
-      alert(data.message);
+    try {
+      const response = await login(email, password);
+      if (response.success) {
+        alert("Successful Login");
+      } else {
+        alert("Something went wrong.");
+      }
+    } catch (error) {
+      console.error(error.message || "Error occured.");
     }
   };
+
   return (
-    <form onSubmit={handleSubmit}>
-<Center h="100vh">
-      <Box bg="gray.900" p={20} rounded="lg" padding={50} h="500">
-      <Heading marginTop={-10} fontSize={30} marginLeft={120} color={"white"}>Login</Heading>
-          <FormControl marginTop={6} color="white">
-         <h2 > Email</h2>
-          <Input bg="black" type="Email" fontColor="White" placeholder="Enter your email address">
-          </Input>
-         </FormControl>
-          <FormControl marginTop={6} color="white">
-            <p>Password</p>
-             <Input  bg="white"  type="Password" fontColor="white" placeholder="Enter your password">
-             </Input>
-         </FormControl>
-         <Stack color={"white"}>
-          <Button marginTop={6} marginCenter={1} h="50px" w="340px" 
-          bg="black" color={"white"} fontSize={38}>Log In</Button>
-          <p>Need an account?<Link color="blue"> Sign up </Link></p>
-          <p>Forgot password?<Link color="blue"> Reset Password </Link></p>
-         </Stack>
-      </Box>
-    </Center>
-    </form>
-  )
+    <Container marginTop={20} color={"gray.200"}>
+      <Flex
+        backgroundColor={"gray.900"}
+        rounded="lg"
+        padding={30}
+        flexDirection={"column"}
+        alignItems={"center"}
+        gap={4}
+      >
+        <Heading
+          fontSize={50}
+          flex
+          justifyContent={"center"}
+          alignItems={"center"}
+        >
+          Login
+        </Heading>
+        <Stack gap="2" width={"full"}>
+          <FormControl orientation="horizontal">
+            <FormLabel placeholder={"me@email.com"}>Email:</FormLabel>
+            <Input
+              focusBorderColor="gray.600"
+              type="email"
+              placeholder="John Doe"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </FormControl>
+
+          <FormControl orientation="horizontal">
+            <FormLabel>Password:</FormLabel>
+            <Input
+              type="password"
+              placeholder={"Password"}
+              focusBorderColor="gray.600"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </FormControl>
+        </Stack>
+        <Stack width={"full"} gap={4}>
+          <Button
+            fontSize={20}
+            padding={3}
+            color={"gray.200"}
+            bgColor={"gray.700"}
+            _hover={{ backgroundColor: "gray.600" }}
+            onClick={handleSubmit}
+          >
+            Log In
+          </Button>
+
+          <Flex flexDirection={"column"} gap={2}>
+            <Text>
+              Need an account? <Link textDecor={"underline"}>Sign up</Link>
+            </Text>
+            <Text>
+              Forgot password?{" "}
+              <Link textDecor={"underline"}>Reset Password</Link>
+            </Text>
+          </Flex>
+        </Stack>
+      </Flex>
+    </Container>
+  );
 }
 
-export default LoginPage
+export default LoginPage;
