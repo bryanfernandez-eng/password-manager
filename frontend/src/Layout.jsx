@@ -8,6 +8,10 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { extendTheme } from "@chakra-ui/react";
 import { UserProvider } from "./context/UserContext";
 import TempPage from "./pages/TempPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import Logout from "./pages/Logout";
+import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 
 const theme = extendTheme({
   styles: {
@@ -29,10 +33,16 @@ function App() {
         <NavBar />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/passwords" element={<PasswordPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/temp" element={<TempPage/>}></Route>
+          <Route element={<PublicRoute/>}>
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/login" element={<LoginPage />} />
+          </Route>
+          <Route element={<ProtectedRoute />}>
+            <Route path="/passwords" element={<PasswordPage />} />
+            <Route path="/logout" element={<Logout />} />
+          </Route>
+          <Route path="/temp" element={<TempPage />} /> {/* Deleting Later */}
+          <Route path="/*" element={<NotFoundPage />} />
         </Routes>
       </ChakraProvider>
     </UserProvider>

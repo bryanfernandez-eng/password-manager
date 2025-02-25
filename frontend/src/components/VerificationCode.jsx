@@ -12,10 +12,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 
-function VerificationCode({ email = "me@email.com" }) {
+function VerificationCode({ email }) {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
-  const navigate = useNavigate(); 
-  const {verifyCode} = useUser(); 
+  const navigate = useNavigate();
+  const { verifyCode } = useUser();
 
   const handleChange = (index, value) => {
     const digit = value.replace(/[^0-9]/g, "").slice(0, 1);
@@ -49,24 +49,23 @@ function VerificationCode({ email = "me@email.com" }) {
   };
 
   const handleSubmit = async () => {
-    const verificationCode = code.join("")
+    const verificationCode = code.join("");
     if (verificationCode.length != 6) {
       alert("Six digits must be entered.");
       return;
     }
 
     try {
-        const response = await verifyCode(email, verificationCode); 
-        if(response.success){
-            alert("Successful Registration.")
-            navigate("/"); 
-            return; 
-        } 
-        alert("Something went wrong.")
-        return; 
-
+      const response = await verifyCode(email, verificationCode);
+      if (response.success) {
+        alert("Successful Registration.");
+        navigate("/");
+        return;
+      }
+      alert("Something went wrong.");
+      return;
     } catch (error) {
-        alert("Error:", error.message)
+      alert("Error:", error.message);
     }
   };
 

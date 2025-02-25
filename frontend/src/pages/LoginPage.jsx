@@ -13,11 +13,13 @@ import {
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useUser } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useUser();
+  const navigate = useNavigate();
 
   const handleSubmit = async () => {
     if (!password || !email) {
@@ -29,6 +31,7 @@ function LoginPage() {
       const response = await login(email, password);
       if (response.success) {
         alert("Successful Login");
+        navigate("/");
       } else {
         alert("Something went wrong.");
       }

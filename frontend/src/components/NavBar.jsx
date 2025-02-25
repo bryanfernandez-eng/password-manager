@@ -9,15 +9,16 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
-import { useLocation } from "react-router-dom"; // Import useLocation
-import { Link as RouterLink } from "react-router-dom"; // Import React Router's Link
+import { useLocation } from "react-router-dom"; 
+import { useUser } from "../context/UserContext";
 
 const Navbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {user, loading} = useUser(); 
   const location = useLocation(); // Get the current location
 
-  const centerLinks = ["Home", "Generate Password", "My Passwords"];
-  const rightLinks = ["Settings", "Logout"];
+  const centerLinks = loading ? [] : user ? ["Home", "Generate Password", "My Passwords"]: ["Home", "Generate Password"];
+  const rightLinks = loading ? [] : user ? ["Settings", "Logout"] : ["Signup", "Login"];
 
   const NavLink = ({ children }) => {
     // Generate the href dynamically
