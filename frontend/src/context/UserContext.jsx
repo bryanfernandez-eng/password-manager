@@ -84,7 +84,7 @@ const useUserContextState = () => {
   const checkAuth = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await backend.get("/auth/check");
+      const response = await backend.get("/auth/status");
       setUser(response.data);
       return { success: true };
     } catch (error) {

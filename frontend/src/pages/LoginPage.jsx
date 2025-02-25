@@ -3,7 +3,6 @@ import {
   Button,
   FormControl,
   Input,
-  Link,
   Stack,
   Flex,
   FormLabel,
@@ -11,13 +10,16 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import { useState, useContext } from "react";
+import { Link } from "react-router-dom";
+import { useState } from "react";
 import { useUser } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useUser();
+  const navigate = useNavigate();
 
   const handleSubmit = async () => {
     if (!password || !email) {
@@ -29,6 +31,7 @@ function LoginPage() {
       const response = await login(email, password);
       if (response.success) {
         alert("Successful Login");
+        navigate("/");
       } else {
         alert("Something went wrong.");
       }
@@ -57,11 +60,11 @@ function LoginPage() {
         </Heading>
         <Stack gap="2" width={"full"}>
           <FormControl orientation="horizontal">
-            <FormLabel placeholder={"me@email.com"}>Email:</FormLabel>
+            <FormLabel>Email:</FormLabel>
             <Input
               focusBorderColor="gray.600"
               type="email"
-              placeholder="John Doe"
+              placeholder={"me@email.com"}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -92,11 +95,16 @@ function LoginPage() {
 
           <Flex flexDirection={"column"} gap={2}>
             <Text>
-              Need an account? <Link textDecor={"underline"}>Sign up</Link>
+              Need an account?{" "}
+              <Text display={"inline"} textDecor={"underline"}>
+                <Link to={"/signup"}>Sign up</Link>
+              </Text>
             </Text>
             <Text>
               Forgot password?{" "}
-              <Link textDecor={"underline"}>Reset Password</Link>
+              <Text textDecor={"underline"} display={"inline"}>
+                <Link>Reset Password</Link>
+              </Text>
             </Text>
           </Flex>
         </Stack>
