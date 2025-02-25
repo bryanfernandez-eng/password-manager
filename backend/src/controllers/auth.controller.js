@@ -4,7 +4,7 @@ import { generateToken } from "../lib/generalToken.js";
 import { sendVerifcationEmail } from "../lib/sendEmail.js";
 import { generateVerificationCode } from "../lib/generateVerificationCode.js";
 
-let unverifiedUsers = {}; 
+let unverifiedUsers = {};
 
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -123,9 +123,9 @@ export const login = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ msg: "Please fill all fields" });
     }
-
+    console.log("-- email", email);
     const user = await User.findOne({ email });
-
+    console.log("-- user", user);
     // check if user does not exist
     if (!user) {
       return res
@@ -145,7 +145,6 @@ export const login = async (req, res) => {
     // generate JWT token
     generateToken(user._id, res);
 
-    
     return res.status(200).json({ success: true, message: user });
   } catch (error) {
     console.error("Error in login controller: ", error.message);
