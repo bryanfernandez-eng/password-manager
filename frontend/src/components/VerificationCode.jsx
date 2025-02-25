@@ -71,8 +71,9 @@ function VerificationCode({ email }) {
 
   return (
     <Container
-      bgColor={"gray.900"}
-      color={"gray.300"}
+    boxShadow={"dark-sm"}
+    backgroundColor={"rgba(26, 32, 44, 0.5)"}
+    color={"gray.300"}
       padding={10}
       rounded={"lg"}
     >

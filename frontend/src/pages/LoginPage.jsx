@@ -41,14 +41,15 @@ function LoginPage() {
   };
 
   return (
-    <Container marginTop={20} color={"gray.200"}>
+    <Container color={"gray.200"} mt={50} height={"container.sm"}>
       <Flex
-        backgroundColor={"gray.900"}
         rounded="lg"
         padding={30}
         flexDirection={"column"}
         alignItems={"center"}
         gap={4}
+        boxShadow={"dark-sm"}
+        backgroundColor={"rgba(26, 32, 44, 0.5)"}
       >
         <Heading
           fontSize={50}
