@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import { ChakraProvider } from "@chakra-ui/react";
 import { extendTheme } from "@chakra-ui/react";
 import { UserProvider } from "./context/UserContext";
+import TempPage from "./pages/TempPage";
 
 const theme = extendTheme({
   styles: {
@@ -31,6 +32,7 @@ function App() {
           <Route path="/passwords" element={<PasswordPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/temp" element={<TempPage/>}></Route>
         </Routes>
       </ChakraProvider>
     </UserProvider>
