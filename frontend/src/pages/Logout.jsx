@@ -29,15 +29,16 @@ function Logout() {
   };
 
   return (
-    <Container color={"gray.300"} marginTop={20}>
+    <Container color={"gray.300"} marginTop={50} height={"container.sm"}>
       <Flex
         justifyContent={"center"}
         alignItems={"center"}
-        bgColor={"gray.900"}
         padding={30}
         rounded={"lg"}
         flexDirection={"column"}
         gap={5}
+        boxShadow={"dark-sm"}
+        backgroundColor={"rgba(26, 32, 44, 0.5)"}
       >
         <Heading>Logout</Heading>
         <Text>Are you sure you want to logout?</Text>

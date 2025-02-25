@@ -9,16 +9,24 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
-import { useLocation } from "react-router-dom"; 
+import { useLocation } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 
 const Navbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {user, loading} = useUser(); 
+  const { user, loading } = useUser();
   const location = useLocation(); // Get the current location
 
-  const centerLinks = loading ? [] : user ? ["Home", "Generate Password", "My Passwords"]: ["Home", "Generate Password"];
-  const rightLinks = loading ? [] : user ? ["Settings", "Logout"] : ["Signup", "Login"];
+  const centerLinks = loading
+    ? []
+    : user
+    ? ["Home", "Generate Password", "My Passwords"]
+    : ["Home", "Generate Password"];
+  const rightLinks = loading
+    ? []
+    : user
+    ? ["Settings", "Logout"]
+    : ["Signup", "Login"];
 
   const NavLink = ({ children }) => {
     // Generate the href dynamically
@@ -36,7 +44,7 @@ const Navbar = () => {
         py={1}
         rounded={"md"}
         href={href}
-        bg={isActive ? "gray.300" : "transparent"} // Highlight active link
+        bg={isActive ? "rgba(203, 213, 224, 0.6)" : "transparent"} // Highlight active link
         color={isActive ? "gray.800" : "gray.300"} // Change text color for active link
         _hover={{
           textDecoration: "none",
@@ -50,7 +58,7 @@ const Navbar = () => {
   };
 
   return (
-    <Box backgroundColor="black" px={10} marginTop={1}>
+    <Box px={10} marginTop={1}>
       <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
         <Link
           href="/"
@@ -61,8 +69,9 @@ const Navbar = () => {
           <Box
             color="gray.300"
             fontWeight="bold"
-            backgroundColor="gray.900"
-            py={2}
+            boxShadow={"dark-sm"}
+            backgroundColor={"rgba(26, 32, 44, 0.8)"}
+            py={1}
             px={4}
             fontSize={20}
             rounded={"md"}
