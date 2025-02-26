@@ -29,11 +29,12 @@ function LoginPage() {
 
     try {
       const response = await login(email, password);
+      console.log(response)
       if (response.success) {
         alert("Successful Login");
         navigate("/");
       } else {
-        alert("Something went wrong.");
+        alert(response.error);
       }
     } catch (error) {
       console.error(error.message || "Error occured.");

@@ -26,7 +26,8 @@ const useUserContextState = () => {
     async (email, password) => {
       try {
         const response = await backend.post("/auth/login", { email, password });
-        setUser(response.data.message);
+        console.log(response)
+        setUser(response);
         return { success: true };
       } catch (error) {
         console.error("Login error:", error);
