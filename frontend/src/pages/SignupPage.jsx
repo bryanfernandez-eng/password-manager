@@ -37,10 +37,11 @@ function SignupPage() {
       const name = firstName + " " + lastName;
       const response = await signup(name, email, password);
       if (response.success) {
-        alert("Successful Login");
+        alert("Email Verification Code Sent");
         setShowVerificationCode(true);
       } else {
-        alert("Something went wrong.");
+
+        alert(response.error);
       }
     } catch (error) {
       console.error(error.message || "Error occured.");

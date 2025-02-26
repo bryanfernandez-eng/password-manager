@@ -62,7 +62,7 @@ function VerificationCode({ email }) {
         navigate("/");
         return;
       }
-      alert("Something went wrong.");
+      alert(response.error);
       return;
     } catch (error) {
       alert("Error:", error.message);

@@ -94,7 +94,16 @@ export const verifyCode = async (req, res) => {
       await newUser.save();
       delete unverifiedUsers[email];
 
-      return res.status(200).json({ succes: true, message: newUser });
+      return res
+        .status(200)
+        .json({
+          succes: true,
+          message: {
+            name: newUser.name,
+            email: newUser.email,
+            id: newUser._id,
+          },
+        });
     } else {
       return res
         .status(404)
@@ -145,7 +154,10 @@ export const login = async (req, res) => {
     // generate JWT token
     generateToken(user._id, res);
 
-    return res.status(200).json({ success: true, message: user });
+    return res.status(200).json({
+      success: true,
+      message: { name: user.name, email: user.email, id: user._id },
+    });
   } catch (error) {
     console.error("Error in login controller: ", error.message);
     res.status(500).json({ success: false, message: "Internal Server Error" });
