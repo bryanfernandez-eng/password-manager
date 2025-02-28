@@ -12,6 +12,7 @@ import Logout from "./pages/auth/Logout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 import { theme } from "./theme/theme";
+import GeneratePassword from "./pages/GeneratePassword";
 
 function App() {
   const location = useLocation();
@@ -21,8 +22,10 @@ function App() {
     <UserProvider>
       <ChakraProvider theme={theme}>
         <NavBar />
+
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/generate-password" element={<GeneratePassword/>}/>
           <Route element={<PublicRoute />}>
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
