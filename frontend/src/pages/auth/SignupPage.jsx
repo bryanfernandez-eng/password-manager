@@ -11,8 +11,8 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { useUser } from "../context/UserContext";
-import VerificationCode from "../components/VerificationCode";
+import { useUser } from "../../context/UserContext";
+import VerificationCode from "../../components/VerificationCode";
 
 function SignupPage() {
   const [email, setEmail] = useState("");
