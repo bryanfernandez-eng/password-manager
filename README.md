@@ -1,52 +1,52 @@
-# Password Manager
+# 🔐 Password Manager
 
 A secure full-stack password management application built with the MERN stack (MongoDB, Express, React, Node.js).
 
-## Overview
+## 🌟 Overview
 
 This password manager application allows users to securely store, generate, and manage their passwords. It features user authentication with email verification, secure password storage, and a password generator with customization options.
 
-## Features
+## ✨ Features
 
-- **User Authentication**
+- **🔑 User Authentication**
   - Signup with email verification
   - Login/logout functionality
   - JWT-based authentication with HttpOnly cookies
 
-- **Password Management**
+- **📋 Password Management**
   - Store passwords for different websites
   - Add, delete, and update stored passwords
   - Search through saved passwords
 
-- **Password Generation**
+- **🎲 Password Generation**
   - Customizable password length
   - Include/exclude character types (uppercase, lowercase, numbers, symbols)
   - Add specific strings to passwords
   - Exclude specific characters
   - Password shuffling
 
-- **Security**
+- **🛡️ Security**
   - Passwords encrypted using bcrypt
   - Secure HTTP-only cookies
   - CORS protection
   - Helmet for security headers
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-- React.js
-- Express.js
-- MongoDB
+- ⚛️ React.js
+- 🚂 Express.js
+- 🍃 MongoDB
 
-## Installation
+## 📥 Installation
 
-### Prerequisites
+### 📋 Prerequisites
 
 - Node.js (v14 or later)
 - npm or yarn
 - MongoDB (local or Atlas)
 - Git
 
-### Backend Setup
+### 🖥️ Backend Setup
 
 1. Clone the repository:
 ```bash
@@ -67,7 +67,7 @@ npm install
 npm run dev
 ```
 
-### Frontend Setup
+### 💻 Frontend Setup
 
 1. Install frontend dependencies:
 ```bash
@@ -82,7 +82,7 @@ npm run dev
 
 The frontend will be available at `http://localhost:5173`, and the backend API at `http://localhost:3000`.
 
-### Environment Variables
+### 🔧 Environment Variables
 
 Create a `.env` file in the backend directory with the following variables:
 
@@ -102,7 +102,7 @@ EMAIL=your_email@gmail.com
 EMAIL_PASSWORD=your_email_app_password
 ```
 
-## Usage
+## 📝 Usage
 
 1. Register a new account with email verification
 2. Log in to your account
@@ -110,7 +110,7 @@ EMAIL_PASSWORD=your_email_app_password
 4. Save passwords for different websites
 5. View, edit, or delete your saved passwords
 
-## Contributing
+## 👥 Contributing
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature-name`
