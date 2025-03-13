@@ -1,5 +1,8 @@
 import bcrypt from "bcrypt";
 import { User } from "../models/user.model.js";
+import { encrypt, decrypt } from "../lib/encryption.js";
+
+
 
 export const addPassword = async (req, res) => {
   const { siteName, siteUrl, email, password } = req.body;
@@ -29,14 +32,13 @@ export const addPassword = async (req, res) => {
         .json({ success: false, message: "Same email for same site" });
     }
 
-    const secretKey = process.env.ENCRYPTION_KEY;
-    // const encryptedPassword = encrypt(password, secretKey); 
+    const encryptedPassword = encrypt(password);
 
     user.savedPasswords.push({
       siteName,
       siteUrl,
       email,
-      password: password,
+      password: encryptedPassword,
     });
 
     await user.save();
@@ -46,16 +48,6 @@ export const addPassword = async (req, res) => {
       .json({ success: true, message: "Password added successfully" });
   } catch (error) {
     console.error("Error in addPassword controller: ", error.message);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal Server Error" });
-  }
-};
-
-export const editPassword = async (req, res) => {
-  try {
-  } catch (error) {
-    console.error("Error in editPassword controller: ", error.message);
     return res
       .status(500)
       .json({ success: false, message: "Internal Server Error" });
@@ -160,7 +152,7 @@ export const getPassword = async (req, res) => {
       });
     }
 
-    const secretKey = process.env.ENCRYPTION_KEY;
+    const decryptedPassword = decrypt(passwordEntry.password); 
 
     res.status(200).json({
       success: true,
@@ -169,7 +161,7 @@ export const getPassword = async (req, res) => {
         siteUrl: passwordEntry.siteUrl,
         email: passwordEntry.email,
         notes: passwordEntry.notes,
-        password: passwordEntry.password,
+        password: decryptedPassword,
         createdAt: passwordEntry.createdAt,
         updatedAt: passwordEntry.updatedAt,
       },
@@ -182,11 +174,23 @@ export const getPassword = async (req, res) => {
   }
 };
 
-// not done
+
+// Not completed 
+
 const searchPasswords = async (req, res) => {
   try {
   } catch (error) {
     console.error("Error in searchPasswords controller: ", error.message);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const editPassword = async (req, res) => {
+  try {
+  } catch (error) {
+    console.error("Error in editPassword controller: ", error.message);
     return res
       .status(500)
       .json({ success: false, message: "Internal Server Error" });
