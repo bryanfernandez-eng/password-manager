@@ -11,7 +11,6 @@ dotenv.config()
 
 const SECRET_KEY_ENCRYPT = process.env.SECRET_KEY_ENCRYPT; 
 
-console.log(SECRET_KEY_ENCRYPT)
 export const encrypt = (text) => {
   try {
     // Create a buffer from the secret key (must be 32 bytes for AES-256)

@@ -1,8 +1,10 @@
 import { User } from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 
+// Middleware to protect routes that require authentication
 export const protectRoute = async (req, res, next) => {
   try {
+    // Get JWT from cookies
     const token = req.cookies.jwt;
 
     // Check if token exists and is not expired
@@ -12,7 +14,7 @@ export const protectRoute = async (req, res, next) => {
         .json({ success: false, message: "Not authorized, token is required" });
     }
 
-    // Verify token
+    // Verify token with JWT secret
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -31,6 +33,7 @@ export const protectRoute = async (req, res, next) => {
       });
     }
 
+    // Find the user without returning the password
     const user = await User.findById(decoded.userId).select("-password");
 
     // Check if user exists
@@ -40,9 +43,10 @@ export const protectRoute = async (req, res, next) => {
         .json({ success: false, message: "Not authorized, user not found" });
     }
 
-    // Attach user to the request object
+    // Attach user to the request object for use in route handlers
     req.user = user;
 
+    // Move to the next middleware or route handler
     next();
   } catch (error) {
     console.log("Error in protectRoute middleware:", error.message);

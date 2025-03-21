@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import validator from "validator";
 const { isEmail } = validator;
 
+// Schema for storing password entries
 const savedPasswordSchema = new mongoose.Schema(
   {
     siteName: {
@@ -21,17 +22,18 @@ const savedPasswordSchema = new mongoose.Schema(
       validate: [isEmail, "Invalid Email"],
     },
     password: {
-      type: String,
+      type: String,       // This will store the encrypted password
       required: true,
     },
     notes: {
       type: String,
-      default: " ",
+      default: " ",       // Default empty string for notes
     },
   },
-  { timestamps: true }
+  { timestamps: true }    // Adds createdAt and updatedAt timestamps
 );
 
+// Main user schema for app users
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -41,21 +43,22 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: [true, "Email is required"],
-      lowercase: true,
-      trim: true,
+      lowercase: true,    // Force lowercase for consistency
+      trim: true,         // Remove whitespace
       validate: [isEmail, "Invalid Email"],
-      unique: true,
+      unique: true,       // Ensures no duplicate emails
     },
     password: {
-      type: String,
+      type: String,       // User's hashed password
       required: true,
     },
     savedPasswords: {
-      type: [savedPasswordSchema],
-      default: [],
+      type: [savedPasswordSchema],  // Array of password entries
+      default: [],                  // Start with empty array
     },
   },
-  { timestamps: true }
+  { timestamps: true }    // Adds createdAt and updatedAt timestamps
 );
 
+// Create and export the User model
 export const User = mongoose.model("User", userSchema);

@@ -1,5 +1,7 @@
-import { Flex, Heading, Text } from "@chakra-ui/react";
-import {
+import { 
+  Flex, 
+  Heading, 
+  Text,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -9,13 +11,17 @@ import {
   Button,
   Checkbox,
   useToast,
-  Spinner,
-} from "@chakra-ui/react";
+  VStack,
+  HStack,
+  Box,
+  useDisclosure  // Add this import
+} from "@chakra-ui/react"
 import { useState } from "react";
 import { useUser } from "../context/UserContext";
-
+import PasswordEntryModal from "../components/PasswordEntryModal";
+// Generate Password Component
 function GeneratePassword() {
-  const [passwordSize, setPasswordSize] = useState(15);
+  const [passwordSize, setPasswordSize] = useState(19);
   const [password, setPassword] = useState("");
   const [specificString, setSpecificString] = useState("");
   const [excludeChars, setExcludeChars] = useState("");
@@ -23,12 +29,14 @@ function GeneratePassword() {
   const [existingPassword, setExistingPassword] = useState("");
   const [options, setOptions] = useState({
     uppercase: true,
-    lowercase: true,
+    lowercase: false,
     symbols: true,
     numbers: true,
   });
-  const { user, loading } = useUser();
+  const { user } = useUser();
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [currentPassword, setCurrentPassword] = useState(null);
 
   const handleOptionChange = (option) => {
     setOptions({
@@ -156,213 +164,237 @@ function GeneratePassword() {
     }
   };
 
-  if (loading) {
-    return (
-      <Flex
-        justifyContent={"center"}
-        alignItems={"center"}
-        height={"container.sm"}
-      >
-        <Spinner />
-      </Flex>
-    );
-  }
+  const handleSavePassword = () => {
+    if (!password) {
+      toast({
+        title: "No Password to Save",
+        description: "Please generate a password first",
+        status: "warning",
+        duration: 2000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    // Preset the password in the modal
+    setCurrentPassword({
+      siteName: '',
+      siteUrl: '',
+      email: '',
+      password: password
+    });
+
+    // Open the modal
+    onOpen();
+  };
+
+  const handleModalSave = () => {
+    // Here you would typically save the password to your backend or context
+    toast({
+      title: "Password Saved",
+      description: "Your password has been saved successfully",
+      status: "success",
+      duration: 2000,
+      isClosable: true,
+    });
+    
+    // Close the modal
+    onClose();
+  };
 
   return (
-    <Flex
-      flexDirection={"row"}
-      justifyContent={"center"}
-      alignItems={"flex-start"}
-      gap={16}
-      color={"gray.200"}
-      marginY={20}
-    >
-      {/* Left Container */}
+    <>
       <Flex
-        flexDirection={"column"}
-        backgroundColor={"rgba(26, 32, 44, 0.7)"}
-        alignItems={"center"}
-        paddingTop={9}
-        paddingBottom={8}
-        paddingX={"12"}
-        rounded={"lg"}
+        maxW="container.xl"
+        mx="auto"
         gap={8}
-        textAlign={"center"}
+        p={10}
+        color="gray.200"
       >
-        <Heading>Generate A Password</Heading>
+        {/* Left Container - Larger with Generated Password */}
+        <VStack 
+          flex="1"
+          spacing={6}
+          backgroundColor="rgba(26, 32, 44, 0.7)"
+          padding={20}
+          borderRadius="lg"
+          align="stretch"
+        >
+          <Heading textAlign="center" size="xl">Generate Password</Heading>
 
-        <Flex flexDirection={"column"} gap={3} width={"full"}>
-          <Flex
-            backgroundColor={"gray.700"}
-            paddingLeft={3}
-            rounded={"lg"}
-            border={"2px"}
-          >
-            <Input
-              width={"sm"}
-              variant={"unstyled"}
-              fontSize={"sm"}
-              _disabled={{ color: "white", background: "transparent" }}
-              value={password || "Password123"}
-              isDisabled
-            />
-            <Button
-              backgroundColor={"gray.300"}
-              onClick={handleCopy}
-              fontSize="xs"
-              width={"12"}
-              color="black"
+          <VStack spacing={6} width="full">
+            <Flex 
+              backgroundColor="gray.700"
+              borderRadius="lg"
+              overflow="hidden"
+              width={"full"}
             >
-              Copy
+              <Input
+                flex={1}
+                variant="unstyled"
+                fontSize="lg"
+                height="50px"
+                paddingX={3}
+                value={password || ""}
+                isReadOnly
+                placeholder="Generated password will appear here"
+                textAlign="center"
+              />
+              <Button
+                backgroundColor="gray.300"
+                color="black"
+                onClick={handleCopy}
+                borderRadius={0}
+                px={6}
+                height={"full"}
+              >
+                Copy
+              </Button>
+            </Flex>
+            <Button
+              width="full"
+              backgroundColor="gray.300"
+              color="black"
+              size="lg"
+              onClick={generatePassword}
+            >
+              Generate
             </Button>
-          </Flex>
-          <Button
-            backgroundColor={"gray.300"}
-            fontWeight={"bold"}
-            onClick={generatePassword}
-            color="black"
-          >
-            Generate
-          </Button>
-          {user && <Text cursor={"pointer"}>Save Password?</Text>}
-        </Flex>
+            {user && (
+              <Text 
+                textAlign="center" 
+                cursor="pointer"
+                _hover={{ textDecoration: "underline" }}
+                onClick={handleSavePassword}
+              >
+                Save Password?
+              </Text>
+            )}
+          </VStack>
+        </VStack>
+
+        {/* Right Container */}
+        <VStack 
+          flex="1"
+          spacing={6}
+          backgroundColor="rgba(26, 32, 44, 0.7)"
+          padding={8}
+          borderRadius="lg"
+          align="stretch"
+        >
+          {/* Password Length */}
+          <VStack spacing={2} align="stretch">
+            <Text>Password Length (5-40 characters)</Text>
+            <NumberInput
+              value={passwordSize}
+              onChange={(valueString) =>
+                setPasswordSize(parseInt(valueString) || 5)
+              }
+              min={5}
+              max={40}
+            >
+              <NumberInputField textAlign="center" />
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            </NumberInput>
+          </VStack>
+
+          {user && (
+            <>
+              {/* Specific String */}
+              <VStack spacing={2} align="stretch">
+                <Text>Insert a specific string</Text>
+                <Input
+                  value={specificString}
+                  onChange={(e) => setSpecificString(e.target.value)}
+                  placeholder="Required string (e.g., Special2024)"
+                />
+              </VStack>
+
+              {/* Exclude Characters */}
+              <VStack spacing={2} align="stretch">
+                <Text>Exclude characters (up to 30)</Text>
+                <Input
+                  value={excludeChars}
+                  onChange={(e) => setExcludeChars(e.target.value)}
+                  maxLength={30}
+                  placeholder="Characters to exclude (e.g., 0O1Il)"
+                />
+              </VStack>
+
+              {/* Custom Characters */}
+              <VStack spacing={2} align="stretch">
+                <Text>Include custom characters</Text>
+                <Input
+                  value={customChars}
+                  onChange={(e) => setCustomChars(e.target.value)}
+                  placeholder="Additional characters (e.g., £€¥)"
+                />
+              </VStack>
+
+              {/* Shuffle Existing Password */}
+              <VStack spacing={2} align="stretch">
+                <Text>Shuffle existing password</Text>
+                <HStack>
+                  <Input
+                    flex={1}
+                    value={existingPassword}
+                    onChange={(e) => setExistingPassword(e.target.value)}
+                    placeholder="Enter a password to shuffle"
+                  />
+                  <Button
+                    colorScheme="gray"
+                    onClick={shufflePassword}
+                  >
+                    Shuffle
+                  </Button>
+                </HStack>
+              </VStack>
+            </>
+          )}
+
+          {/* Character Set Options */}
+          <VStack spacing={4} align="stretch">
+            <VStack spacing={3} align="stretch">
+              {[
+                { label: "Uppercase letters (A-Z)", key: "uppercase" },
+                { label: "Lowercase letters (a-z)", key: "lowercase" },
+                { label: "Symbols (!@#$%^&*)", key: "symbols" },
+                { label: "Numbers (0-9)", key: "numbers" },
+              ].map(({ label, key }) => (
+                <Flex 
+                  key={key}
+                  justifyContent="space-between" 
+                  alignItems="center"
+                  gap={3}
+                  borderBottom={"1px"}
+                  borderColor="gray.600"
+                  pb={2}
+                >
+                  <Text>{label}</Text>
+                  <Checkbox
+                    isChecked={options[key]}
+                    onChange={() => handleOptionChange(key)}
+                    colorScheme="gray"
+                  />
+                </Flex>
+              ))}
+            </VStack>
+          </VStack>
+        </VStack>
       </Flex>
 
-      {/* Right Container */}
-      <Flex
-        flexDirection={"column"}
-        backgroundColor={"rgba(26, 32, 44, 0.7)"}
-        paddingTop={9}
-        paddingBottom={8}
-        paddingX={"12"}
-        rounded={"lg"}
-        gap={6}
-      >
-        {/* Length of Password */}
-        <Flex flexDirection={"column"} gap={2}>
-          <Text>Set password length (5-40 characters)</Text>
-          <NumberInput
-            step={1}
-            size={"sm"}
-            focusBorderColor="gray.500"
-            min={5}
-            max={40}
-            value={passwordSize}
-            onChange={(valueString) =>
-              setPasswordSize(parseInt(valueString) || 5)
-            }
-          >
-            <NumberInputField
-              textAlign={"center"}
-              _active={{ border: "none" }}
-            />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
-        </Flex>
-        {user && (
-          <>
-            {/* Include Subsequent String Randomly or at a specific index */}
-            <Flex flexDirection={"column"} gap={2}>
-              <Text>Insert a specific string into the password</Text>
-              <Input
-                value={specificString}
-                onChange={(e) => setSpecificString(e.target.value)}
-                placeholder="Required string (e.g., Special2024)"
-              />
-            </Flex>
-            {/* Exclude Characters */}
-            <Flex flexDirection={"column"} gap={2}>
-              <Text>Exclude certain characters (up to 30)</Text>
-              <Input
-                value={excludeChars}
-                onChange={(e) => setExcludeChars(e.target.value)}
-                maxLength={30}
-                placeholder="Characters to exclude (e.g., 0O1Il)"
-              />
-            </Flex>
-            {/* Add specific Characters randomly */}
-            <Flex flexDirection={"column"} gap={2}>
-              <Text>Include custom characters randomly</Text>
-              <Input
-                value={customChars}
-                onChange={(e) => setCustomChars(e.target.value)}
-                placeholder="Additional characters (e.g., £€¥)"
-              />
-            </Flex>
-            {/* Shuffle existing password */}
-            <Flex flexDirection={"column"} gap={2}>
-              <Text>Shuffle an existing password</Text>
-              <Flex gap={2}>
-                <Input
-                  flex="1"
-                  value={existingPassword}
-                  onChange={(e) => setExistingPassword(e.target.value)}
-                  placeholder="Enter a password to shuffle"
-                />
-                <Button
-                  size="md"
-                  backgroundColor="gray.300"
-                  color="black"
-                  onClick={shufflePassword}
-                >
-                  Shuffle
-                </Button>
-              </Flex>
-            </Flex>
-          </>
-        )}
-        {/* Character set options */}
-        <Flex flexDirection={"column"} gap={2}>
-          <Flex
-            flexDirection={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Text>Uppercase letters (A-Z)</Text>
-            <Checkbox
-              isChecked={options.uppercase}
-              onChange={() => handleOptionChange("uppercase")}
-            />
-          </Flex>
-          <Flex
-            flexDirection={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Text>Lowercase letters (a-z)</Text>
-            <Checkbox
-              isChecked={options.lowercase}
-              onChange={() => handleOptionChange("lowercase")}
-            />
-          </Flex>
-          <Flex
-            flexDirection={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Text>Symbols (!@#$%^&*)</Text>
-            <Checkbox
-              isChecked={options.symbols}
-              onChange={() => handleOptionChange("symbols")}
-            />
-          </Flex>
-          <Flex
-            flexDirection={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Text>Numbers (0-9)</Text>
-            <Checkbox
-              isChecked={options.numbers}
-              onChange={() => handleOptionChange("numbers")}
-            />
-          </Flex>
-        </Flex>
-      </Flex>
-    </Flex>
+      {/* Password Entry Modal */}
+      <PasswordEntryModal 
+        isOpen={isOpen}
+        onClose={onClose}
+        currentPassword={currentPassword}
+        setCurrentPassword={setCurrentPassword}
+        onSave={handleModalSave}
+      />
+    </>
   );
 }
 
