@@ -8,6 +8,10 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
+import { IoIosLogOut } from "react-icons/io";
+import { MdOutlineCancel } from "react-icons/md";
+
+
 
 function Logout() {
   const { logout } = useUser();
@@ -40,15 +44,15 @@ function Logout() {
         boxShadow={"dark-sm"}
         backgroundColor={"rgba(26, 32, 44, 0.5)"}
       >
-        <Heading>Logout</Heading>
-        <Text>Are you sure you want to logout?</Text>
+        <Heading>Confirm Logout</Heading>
+        <Text>Are you sure you want to log out of your account?</Text>
 
-        <HStack>
-          <Button bgColor={"gray.400"} onClick={handleSubmit}>
-            Yes
+        <HStack gap={5}>
+          <Button bgColor={"red.500"} _hover={{bg:"red.600"}}  onClick={handleSubmit}>
+          <Flex gap={2} justifyContent={"center"} alignItems={"center"}><IoIosLogOut/> Logout </Flex>
           </Button>
           <Button bgColor={"gray.400"} onClick={() => navigate("/")}>
-            No
+           <Flex gap={2} justifyContent={"center"} alignItems={"center"}> <MdOutlineCancel/> Cancel</Flex>
           </Button>
         </HStack>
       </Flex>
