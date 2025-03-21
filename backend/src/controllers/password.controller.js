@@ -3,11 +3,12 @@ import { User } from "../models/user.model.js";
 import { encrypt, decrypt } from "../lib/encryption.js";
 
 
-
+// Adds a new password entry to the user's saved passwords collection
 export const addPassword = async (req, res) => {
   const { siteName, siteUrl, email, password } = req.body;
 
   try {
+    // Validate that all required fields are provided
     if (!siteName || !siteUrl || !email || !password) {
       return res
         .status(400)
@@ -16,12 +17,14 @@ export const addPassword = async (req, res) => {
 
     const user = await User.findById(req.user._id);
 
+    // Check if user exists
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
 
+    // Check if the same email is already saved for this site
     if (
       user.savedPasswords.find(
         (p) => p.email === email && p.siteName === siteName
@@ -32,8 +35,10 @@ export const addPassword = async (req, res) => {
         .json({ success: false, message: "Same email for same site" });
     }
 
+    // Encrypt the password before storing it
     const encryptedPassword = encrypt(password);
 
+    // Add the new password to the user's collection
     user.savedPasswords.push({
       siteName,
       siteUrl,
@@ -54,10 +59,12 @@ export const addPassword = async (req, res) => {
   }
 };
 
+// Deletes a specific password entry based on site name and email
 export const deletePassword = async (req, res) => {
   const { siteName, email } = req.body;
 
   try {
+    // Validate that all required fields are provided
     if (!siteName || !email) {
       return res
         .status(400)
@@ -66,22 +73,26 @@ export const deletePassword = async (req, res) => {
 
     const user = await User.findById(req.user._id);
 
+    // Check if user exists
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
 
+    // Find the index of the password to delete
     const passwordIndex = user.savedPasswords.findIndex(
       (p) => p.email === email && p.siteName === siteName
     );
 
+    // Check if the password exists
     if (passwordIndex === -1) {
       return res
         .status(404)
         .json({ success: false, message: "Password not found" });
     }
 
+    // Remove the password from the array
     user.savedPasswords.splice(passwordIndex, 1);
 
     await user.save();
@@ -97,16 +108,19 @@ export const deletePassword = async (req, res) => {
   }
 };
 
+// Clears all saved passwords for a user
 export const deleteAllPasswords = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
+    // Check if user exists
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
 
+    // Reset the saved passwords array to empty
     user.savedPasswords = [];
 
     await user.save();
@@ -122,10 +136,12 @@ export const deleteAllPasswords = async (req, res) => {
   }
 };
 
+// Retrieves a specific password entry and decrypts it
 export const getPassword = async (req, res) => {
   const { email, siteName } = req.params;
 
   try {
+    // Validate that all required fields are provided
     if (!siteName || !email) {
       return res.status(400).json({
         success: false,
@@ -134,6 +150,7 @@ export const getPassword = async (req, res) => {
     }
     const user = await User.findById(req.user._id);
 
+    // Check if user exists
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -141,10 +158,12 @@ export const getPassword = async (req, res) => {
       });
     }
 
+    // Find the requested password entry
     const passwordEntry = user.savedPasswords.find(
       (p) => email == p.email && siteName === p.siteName
     );
 
+    // Check if the password exists
     if (!passwordEntry) {
       return res.status(404).json({
         success: false,
@@ -152,6 +171,7 @@ export const getPassword = async (req, res) => {
       });
     }
 
+    // Decrypt the password before sending it back
     const decryptedPassword = decrypt(passwordEntry.password); 
 
     res.status(200).json({
@@ -175,8 +195,7 @@ export const getPassword = async (req, res) => {
 };
 
 
-// Not completed 
-
+// Not completed - Will handle searching through saved passwords 
 const searchPasswords = async (req, res) => {
   try {
   } catch (error) {
@@ -187,6 +206,7 @@ const searchPasswords = async (req, res) => {
   }
 };
 
+// Not completed - Will handle updating password entries
 export const editPassword = async (req, res) => {
   try {
   } catch (error) {

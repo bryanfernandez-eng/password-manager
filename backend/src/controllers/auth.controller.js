@@ -4,8 +4,10 @@ import { generateToken } from "../lib/generalToken.js";
 import { sendVerifcationEmail } from "../lib/sendEmail.js";
 import { generateVerificationCode } from "../lib/generateVerificationCode.js";
 
+// Temporary storage for users who haven't verified their email yet
 let unverifiedUsers = {};
 
+// Handles new user registration with email verification
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -39,6 +41,7 @@ export const signup = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    // Store user data temporarily until verification
     unverifiedUsers[email] = {
       email,
       name,
@@ -47,6 +50,7 @@ export const signup = async (req, res) => {
       createdAt: Date.now(),
     };
 
+    // Send verification email to user
     await sendVerifcationEmail(verificationCode, email);
 
     return res.status(200).json({
@@ -59,12 +63,14 @@ export const signup = async (req, res) => {
   }
 };
 
+// Verifies user email with the code they received
 export const verifyCode = async (req, res) => {
   const { email, verificationCode } = req.body;
 
   try {
     const unverifiedUser = unverifiedUsers[email];
 
+    // Check if verification code is valid
     if (
       !unverifiedUser ||
       unverifiedUser.verificationCode !== verificationCode
@@ -74,6 +80,7 @@ export const verifyCode = async (req, res) => {
         .json({ success: false, message: "Invalid verification code" });
     }
 
+    // Check if verification code has expired (5 minutes)
     const expirationTime = 5 * 60 * 1000;
     if (Date.now() - unverifiedUser.createdAt > expirationTime) {
       delete unverifiedUsers[email]; // Remove expired user data
@@ -82,6 +89,7 @@ export const verifyCode = async (req, res) => {
         .json({ success: false, message: "Verification code has expired" });
     }
 
+    // Create new user in database after successful verification
     const newUser = new User({
       name: unverifiedUser.name,
       email: unverifiedUser.email,
@@ -115,13 +123,14 @@ export const verifyCode = async (req, res) => {
   }
 };
 
-// Login
+// Handles user login authentication
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
   console.log(email, password);
 
   try {
+    // Check if user is already logged in
     if (req.cookies.jwt) {
       return res
         .status(200)
@@ -142,6 +151,7 @@ export const login = async (req, res) => {
         .json({ success: false, message: "Invalid Credentials" });
     }
 
+    // Verify password
     const isMatch = await bcrypt.compare(password, user.password);
 
     // check if password is incorrect
@@ -164,7 +174,7 @@ export const login = async (req, res) => {
   }
 };
 
-// Logout
+// Logs out the user by clearing JWT cookie
 export const logout = async (req, res) => {
   try {
     // destroy the JWT cookie when user logs out
@@ -176,9 +186,10 @@ export const logout = async (req, res) => {
   }
 };
 
-// Delete Account
+// Removes user account from the database permanently
 export const deleteAccount = async (req, res) => {
   try {
+    // Check if user exists in request (added by auth middleware)
     if (!req.user) {
       return res
         .status(401)
@@ -192,6 +203,7 @@ export const deleteAccount = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
+    // Clear authentication cookie after account deletion
     res.cookie("jwt", "", { maxAge: 0 });
 
     return res.status(200).json({ success: true, message: "Account deleted" });
@@ -201,9 +213,10 @@ export const deleteAccount = async (req, res) => {
   }
 };
 
-// Check authentication
+// Verifies if user is authenticated
 export const checkAuth = async (req, res) => {
   try {
+    // Just return user data if they're authenticated
     return res.status(200).json(req.user);
   } catch (error) {
     console.log("Error in checkAuth controller:", error.message);
@@ -211,17 +224,19 @@ export const checkAuth = async (req, res) => {
   }
 };
 
-// Update account
+// Updates user account information
 export const updateAccount = async (req, res) => {
   const { name, password } = req.body;
 
   try {
+    // Check if user exists in request (added by auth middleware)
     if (!req.user) {
       return res
         .status(401)
         .json({ success: false, message: "Not authorized, user not found" });
     }
 
+    // Ensure at least one field is provided
     if (!name && !password) {
       return res
         .status(400)
@@ -230,6 +245,7 @@ export const updateAccount = async (req, res) => {
 
     const updateFields = {};
 
+    // Hash password if it's being updated
     if (password) {
       const salt = await bcrypt.genSalt(10);
       updateFields.password = await bcrypt.hash(password, salt);
@@ -239,6 +255,7 @@ export const updateAccount = async (req, res) => {
       updateFields.name = name;
     }
 
+    // Update user and return updated data (without password)
     const user = await User.findByIdAndUpdate(req.user._id, updateFields, {
       new: true,
     }).select("-password");
