@@ -31,7 +31,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
           </Route>
           <Route element={<ProtectedRoute />}>
-            <Route path="/passwords" element={<PasswordPage />} />
+            <Route path="/my-passwords" element={<PasswordPage />} />
             <Route path="/logout" element={<Logout />} />
           </Route>
           <Route path="/temp" element={<TempPage />} /> {/* Deleting Later */}
