@@ -127,8 +127,6 @@ export const verifyCode = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
-  console.log(email, password);
-
   try {
     // Check if user is already logged in
     if (req.cookies.jwt) {
@@ -141,9 +139,7 @@ export const login = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ msg: "Please fill all fields" });
     }
-    console.log("-- email", email);
     const user = await User.findOne({ email });
-    console.log("-- user", user);
     // check if user does not exist
     if (!user) {
       return res
