@@ -18,9 +18,11 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
+  useColorMode,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import PasswordEntryModal from "../components/PasswordEntryModal";
+import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import passwordService from "../api/passwordService";
 import { DeleteIcon } from "@chakra-ui/icons";
 
@@ -31,7 +33,13 @@ function PasswordPage() {
   const [error, setError] = useState(null);
   const [currentPassword, setCurrentPassword] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { 
+    isOpen: isDeleteModalOpen, 
+    onOpen: openDeleteModal, 
+    onClose: closeDeleteModal 
+  } = useDisclosure();
   const toast = useToast();
+  const { colorMode } = useColorMode();
 
   // Fetch passwords on component mount
   useEffect(() => {
@@ -136,26 +144,25 @@ function PasswordPage() {
     try {
       // Fetch the actual password before editing
       const response = await passwordService.getPassword(
-        password.siteName,
+        password.siteName, 
         password.email
       );
-
+      
       if (response.success) {
         // Store the original siteName and email for reference when saving edits
         setCurrentPassword({
           ...response.data,
           originalSiteName: password.siteName,
-          originalEmail: password.email,
+          originalEmail: password.email
         });
         onOpen();
       } else {
         toast({
           title: "Error",
-          description:
-            response.message || "Failed to retrieve password details",
+          description: response.message || "Failed to retrieve password details",
           status: "error",
           duration: 3000,
-          isClosable: true,
+          isClosable: true
         });
       }
     } catch (error) {
@@ -164,10 +171,11 @@ function PasswordPage() {
         description: error.message || "Failed to retrieve password details",
         status: "error",
         duration: 3000,
-        isClosable: true,
+        isClosable: true
       });
     }
   };
+  
   const handleAddNew = () => {
     setCurrentPassword({
       siteName: "",
@@ -181,12 +189,11 @@ function PasswordPage() {
   const handleSave = async () => {
     try {
       // Check if this is a new password or an update
-      const isEdit = passwords.some(
-        (p) =>
-          p.siteName === currentPassword.originalSiteName &&
-          p.email === currentPassword.originalEmail
+      const isEdit = passwords.some(p => 
+        p.siteName === currentPassword.originalSiteName && 
+        p.email === currentPassword.originalEmail
       );
-
+  
       let response;
       if (isEdit) {
         // Use the edit endpoint
@@ -198,7 +205,7 @@ function PasswordPage() {
             siteUrl: currentPassword.siteUrl,
             email: currentPassword.email,
             password: currentPassword.password,
-            notes: currentPassword.notes || "",
+            notes: currentPassword.notes || ""
           }
         );
       } else {
@@ -208,21 +215,21 @@ function PasswordPage() {
           siteUrl: currentPassword.siteUrl,
           email: currentPassword.email,
           password: currentPassword.password,
-          notes: currentPassword.notes || "",
+          notes: currentPassword.notes || ""
         });
       }
-
+      
       if (response.success) {
         toast({
           title: isEdit ? "Password Updated" : "Password Added",
-          description: isEdit
-            ? "Your password has been updated successfully"
-            : "Your password has been added successfully",
+          description: isEdit ? 
+            "Your password has been updated successfully" : 
+            "Your password has been added successfully",
           status: "success",
           duration: 2000,
-          isClosable: true,
+          isClosable: true
         });
-
+        
         // Refresh the password list
         fetchPasswords();
         onClose();
@@ -232,7 +239,7 @@ function PasswordPage() {
           description: response.message || "Failed to save password",
           status: "error",
           duration: 3000,
-          isClosable: true,
+          isClosable: true
         });
       }
     } catch (error) {
@@ -241,7 +248,7 @@ function PasswordPage() {
         description: error.message || "Failed to save password",
         status: "error",
         duration: 3000,
-        isClosable: true,
+        isClosable: true
       });
     }
   };
@@ -284,16 +291,7 @@ function PasswordPage() {
     }
   };
 
-  const handleDeleteAll = async () => {
-    // First, show a confirmation dialog
-    if (
-      !window.confirm(
-        "Are you sure you want to delete ALL passwords? This action cannot be undone."
-      )
-    ) {
-      return; // User cancelled the operation
-    }
-
+  const executeDeleteAll = async () => {
     try {
       const response = await passwordService.deleteAllPasswords();
 
@@ -333,7 +331,7 @@ function PasswordPage() {
     return (
       <Container maxW="container.xl" mt={10}>
         <Flex justify="center" align="center" height="300px">
-          <Spinner size="xl" color="gray.300" />
+          <Spinner size="xl" color={colorMode === "dark" ? "gray.300" : "gray.600"} />
         </Flex>
       </Container>
     );
@@ -357,7 +355,7 @@ function PasswordPage() {
           {passwords.length > 0 && (
             <Button
               colorScheme="red"
-              onClick={handleDeleteAll}
+              onClick={openDeleteModal}
               variant="outline"
               leftIcon={<DeleteIcon />}
             >
@@ -371,8 +369,8 @@ function PasswordPage() {
         <Box
           p={4}
           borderRadius="md"
-          backgroundColor="rgba(26, 32, 44, 0.7)"
-          color="gray.200"
+          backgroundColor={colorMode === "dark" ? "rgba(26, 32, 44, 0.7)" : "white"}
+          color={colorMode === "dark" ? "gray.200" : "gray.800"}
           boxShadow="lg"
         >
           {passwords.length === 0 ? (
@@ -384,11 +382,11 @@ function PasswordPage() {
               <Table size="lg" variant="simple">
                 <Thead>
                   <Tr>
-                    <Th color="gray.200">Site Name</Th>
-                    <Th color="gray.200">Site URL</Th>
-                    <Th color="gray.200">Email</Th>
-                    <Th color="gray.200">Password</Th>
-                    <Th color="gray.200" textAlign="center">
+                    <Th color={colorMode === "dark" ? "gray.200" : "gray.700"}>Site Name</Th>
+                    <Th color={colorMode === "dark" ? "gray.200" : "gray.700"}>Site URL</Th>
+                    <Th color={colorMode === "dark" ? "gray.200" : "gray.700"}>Email</Th>
+                    <Th color={colorMode === "dark" ? "gray.200" : "gray.700"}>Password</Th>
+                    <Th color={colorMode === "dark" ? "gray.200" : "gray.700"} textAlign="center">
                       Actions
                     </Th>
                   </Tr>
@@ -398,18 +396,18 @@ function PasswordPage() {
                     <Tr
                       key={`${password.siteName}-${password.email}-${index}`}
                       _hover={{
-                        bg: "whiteAlpha.100",
+                        bg: colorMode === "dark" ? "whiteAlpha.100" : "blackAlpha.50",
                         transition: "background-color 0.2s ease-in-out",
                       }}
                     >
-                      <Td borderColor="gray.600">{password.siteName}</Td>
-                      <Td borderColor="gray.600">
+                      <Td borderColor={colorMode === "dark" ? "gray.600" : "gray.200"}>{password.siteName}</Td>
+                      <Td borderColor={colorMode === "dark" ? "gray.600" : "gray.200"}>
                         <a
                           href={password.siteUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{
-                            color: "#4299E1",
+                            color: colorMode === "dark" ? "#4299E1" : "#3182CE",
                             textDecoration: "underline",
                             transition: "color 0.2s ease-in-out",
                           }}
@@ -417,11 +415,11 @@ function PasswordPage() {
                           {password.siteUrl}
                         </a>
                       </Td>
-                      <Td borderColor="gray.600">{password.email}</Td>
-                      <Td borderColor="gray.600">
+                      <Td borderColor={colorMode === "dark" ? "gray.600" : "gray.200"}>{password.email}</Td>
+                      <Td borderColor={colorMode === "dark" ? "gray.600" : "gray.200"}>
                         {showPasswords[index] ? password.password : "••••••••"}
                       </Td>
-                      <Td borderColor="gray.600">
+                      <Td borderColor={colorMode === "dark" ? "gray.600" : "gray.200"}>
                         <Flex gap={2} justify="center">
                           <Button
                             size="sm"
@@ -477,6 +475,15 @@ function PasswordPage() {
         currentPassword={currentPassword}
         setCurrentPassword={setCurrentPassword}
         onSave={handleSave}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={executeDeleteAll}
+        title="Delete All Passwords"
+        message="Are you sure you want to delete ALL passwords? This action cannot be undone and will remove all your saved passwords."
       />
     </>
   );
