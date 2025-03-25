@@ -11,8 +11,9 @@ import {
   Input,
   Button,
   useToast,
-  Flex,
+  Box,
 } from "@chakra-ui/react";
+import PasswordStrengthMeter from "./PasswordStrengthMeter";
 
 function PasswordEntryModal({
   isOpen,
@@ -24,7 +25,6 @@ function PasswordEntryModal({
   const toast = useToast();
 
   const handleSave = () => {
-    // Validate inputs
     if (
       !currentPassword?.siteName ||
       !currentPassword?.siteUrl ||
@@ -54,7 +54,9 @@ function PasswordEntryModal({
         borderRadius={"xl"}
       >
           <ModalHeader>
-            {currentPassword ? "Edit Password" : "Add New Password"}
+            {currentPassword ? 
+              (currentPassword.originalSiteName ? "Edit Password" : "Add New Password") 
+              : "Add New Password"}
           </ModalHeader>
           <ModalCloseButton m={6} />
         <ModalBody>
@@ -112,6 +114,11 @@ function PasswordEntryModal({
               placeholder="Enter password"
             />
           </FormControl>
+          
+          {/* Password Strength Meter */}
+          <Box mt={4} mb={4}>
+            <PasswordStrengthMeter password={currentPassword?.password || ""} />
+          </Box>
         </ModalBody>
 
         <ModalFooter justifyContent={"center"}>
@@ -119,9 +126,7 @@ function PasswordEntryModal({
             Save
           </Button>
         </ModalFooter>
-        
       </ModalContent>
-      
     </Modal>
   );
 }
