@@ -1,6 +1,6 @@
-import { 
-  Flex, 
-  Heading, 
+import {
+  Flex,
+  Heading,
   Text,
   NumberInput,
   NumberInputField,
@@ -13,12 +13,14 @@ import {
   useToast,
   VStack,
   HStack,
-  useDisclosure  // Add this import
-} from "@chakra-ui/react"
+  useDisclosure, 
+  Box,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { useUser } from "../context/UserContext";
 import PasswordEntryModal from "../components/PasswordEntryModal";
 import passwordService from "../api/passwordService";
+import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
 
 // Generate Password Component
 function GeneratePassword() {
@@ -179,10 +181,10 @@ function GeneratePassword() {
 
     // Preset the password in the modal
     setCurrentPassword({
-      siteName: '',
-      siteUrl: '',
-      email: '',
-      password: password
+      siteName: "",
+      siteUrl: "",
+      email: "",
+      password: password,
     });
 
     // Open the modal
@@ -199,11 +201,11 @@ function GeneratePassword() {
       });
       return;
     }
-  
+
     try {
       // Create a new password entry
       const response = await passwordService.addPassword(currentPassword);
-      
+
       if (response.success) {
         toast({
           title: "Password Saved",
@@ -212,7 +214,7 @@ function GeneratePassword() {
           duration: 2000,
           isClosable: true,
         });
-        
+
         // Close the modal
         onClose();
       } else {
@@ -236,15 +238,9 @@ function GeneratePassword() {
   };
   return (
     <>
-      <Flex
-        maxW="container.xl"
-        mx="auto"
-        gap={8}
-        p={10}
-        color="gray.200"
-      >
-        {/* Left Container - Larger with Generated Password */}
-        <VStack 
+      <Flex maxW="container.xl" mx="auto" gap={8} p={10} color="gray.200">
+        {/* Left Container*/}
+        <VStack
           flex="1"
           spacing={6}
           backgroundColor="rgba(26, 32, 44, 0.7)"
@@ -252,10 +248,12 @@ function GeneratePassword() {
           borderRadius="lg"
           align="stretch"
         >
-          <Heading textAlign="center" size="xl">Generate Password</Heading>
+          <Heading textAlign="center" size="xl">
+            Generate Password
+          </Heading>
 
           <VStack spacing={6} width="full">
-            <Flex 
+            <Flex
               backgroundColor="gray.700"
               borderRadius="lg"
               overflow="hidden"
@@ -293,8 +291,8 @@ function GeneratePassword() {
               Generate
             </Button>
             {user && (
-              <Text 
-                textAlign="center" 
+              <Text
+                textAlign="center"
                 cursor="pointer"
                 _hover={{ textDecoration: "underline" }}
                 onClick={handleSavePassword}
@@ -303,10 +301,16 @@ function GeneratePassword() {
               </Text>
             )}
           </VStack>
+          {/* Password Strength Meter at the bottom */}
+          {password && (
+            
+            <Box width="md" marginTop={5}>
+              <PasswordStrengthMeter password={password} showCriteria={false} />
+            </Box>
+          )}
         </VStack>
-
         {/* Right Container */}
-        <VStack 
+        <VStack
           flex="1"
           spacing={6}
           backgroundColor="rgba(26, 32, 44, 0.7)"
@@ -376,10 +380,7 @@ function GeneratePassword() {
                     onChange={(e) => setExistingPassword(e.target.value)}
                     placeholder="Enter a password to shuffle"
                   />
-                  <Button
-                    colorScheme="gray"
-                    onClick={shufflePassword}
-                  >
+                  <Button colorScheme="gray" onClick={shufflePassword}>
                     Shuffle
                   </Button>
                 </HStack>
@@ -396,9 +397,9 @@ function GeneratePassword() {
                 { label: "Symbols (!@#$%^&*)", key: "symbols" },
                 { label: "Numbers (0-9)", key: "numbers" },
               ].map(({ label, key }) => (
-                <Flex 
+                <Flex
                   key={key}
-                  justifyContent="space-between" 
+                  justifyContent="space-between"
                   alignItems="center"
                   gap={3}
                   borderBottom={"1px"}
@@ -419,7 +420,7 @@ function GeneratePassword() {
       </Flex>
 
       {/* Password Entry Modal */}
-      <PasswordEntryModal 
+      <PasswordEntryModal
         isOpen={isOpen}
         onClose={onClose}
         currentPassword={currentPassword}

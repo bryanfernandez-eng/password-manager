@@ -9,11 +9,13 @@ import {
   Container,
   Text,
   useToast,
+  Box,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useUser } from "../../context/UserContext";
 import VerificationCode from "../../components/VerificationCode";
+import PasswordStrengthMeter from "../../components/PasswordStrengthMeter";
 
 function SignupPage() {
   const toast = useToast();
@@ -143,6 +145,14 @@ function SignupPage() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </FormControl>
+            
+            {/* Password Strength Meter */}
+            {password && (
+              <Box pl={4} pr={4} mb={2}>
+                <PasswordStrengthMeter password={password} />
+              </Box>
+            )}
+            
             <FormControl orientation="horizontal">
               <FormLabel>Confirm Password:</FormLabel>
               <Input
