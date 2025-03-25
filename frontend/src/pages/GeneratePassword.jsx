@@ -13,12 +13,13 @@ import {
   useToast,
   VStack,
   HStack,
-  Box,
   useDisclosure  // Add this import
 } from "@chakra-ui/react"
 import { useState } from "react";
 import { useUser } from "../context/UserContext";
 import PasswordEntryModal from "../components/PasswordEntryModal";
+import passwordService from "../api/passwordService";
+
 // Generate Password Component
 function GeneratePassword() {
   const [passwordSize, setPasswordSize] = useState(19);
@@ -187,21 +188,52 @@ function GeneratePassword() {
     // Open the modal
     onOpen();
   };
-
-  const handleModalSave = () => {
-    // Here you would typically save the password to your backend or context
-    toast({
-      title: "Password Saved",
-      description: "Your password has been saved successfully",
-      status: "success",
-      duration: 2000,
-      isClosable: true,
-    });
-    
-    // Close the modal
-    onClose();
+  const handleModalSave = async () => {
+    if (!currentPassword) {
+      toast({
+        title: "Error",
+        description: "No password data to save",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+      return;
+    }
+  
+    try {
+      // Create a new password entry
+      const response = await passwordService.addPassword(currentPassword);
+      
+      if (response.success) {
+        toast({
+          title: "Password Saved",
+          description: "Your password has been saved successfully",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+        });
+        
+        // Close the modal
+        onClose();
+      } else {
+        toast({
+          title: "Error",
+          description: response.message || "Failed to save password",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save password",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
-
   return (
     <>
       <Flex
