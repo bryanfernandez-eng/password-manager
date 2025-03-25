@@ -5,15 +5,16 @@ import {
   Text,
   Button,
   HStack,
+  useToast,
+  Toast,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import { IoIosLogOut } from "react-icons/io";
 import { MdOutlineCancel } from "react-icons/md";
 
-
-
 function Logout() {
+  const toast = useToast();
   const { logout } = useUser();
   const navigate = useNavigate();
 
@@ -21,14 +22,33 @@ function Logout() {
     try {
       const response = await logout();
       if (response.success) {
-        alert("Logout successful");
+        toast({
+          title: "Logout Successful",
+          description: "Goodbye!",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
         navigate("/login");
         return;
       }
-      alert("Something went wrong.");
+      toast({
+        title: "Logout Failed",
+        description: "Something went wrong",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
       return;
     } catch (error) {
-      alert("Error:", error.message);
+      console.error("Logout error:", error);
+      toast({
+        title: "Logout Failed",
+        description: "Something went wrong",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -48,11 +68,20 @@ function Logout() {
         <Text>Are you sure you want to log out of your account?</Text>
 
         <HStack gap={5}>
-          <Button bgColor={"red.500"} _hover={{bg:"red.600"}}  onClick={handleSubmit}>
-          <Flex gap={2} justifyContent={"center"} alignItems={"center"}><IoIosLogOut/> Logout </Flex>
+          <Button
+            bgColor={"red.500"}
+            _hover={{ bg: "red.600" }}
+            onClick={handleSubmit}
+          >
+            <Flex gap={2} justifyContent={"center"} alignItems={"center"}>
+              <IoIosLogOut /> Logout{" "}
+            </Flex>
           </Button>
           <Button bgColor={"gray.400"} onClick={() => navigate("/")}>
-           <Flex gap={2} justifyContent={"center"} alignItems={"center"}> <MdOutlineCancel/> Cancel</Flex>
+            <Flex gap={2} justifyContent={"center"} alignItems={"center"}>
+              {" "}
+              <MdOutlineCancel /> Cancel
+            </Flex>
           </Button>
         </HStack>
       </Flex>

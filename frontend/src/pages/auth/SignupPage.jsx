@@ -8,6 +8,7 @@ import {
   FormLabel,
   Container,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -15,6 +16,7 @@ import { useUser } from "../../context/UserContext";
 import VerificationCode from "../../components/VerificationCode";
 
 function SignupPage() {
+  const toast = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -26,30 +28,61 @@ function SignupPage() {
 
   const handleSubmit = async () => {
     if (!password || !email || !confirmPassword || !firstName || !lastName) {
-      alert("All Fields Must Be Filled In.");
+      toast({
+        title: "Signup Failed",
+        description: "All Fields Must Be Filled In.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
       return;
     }
     if (password !== confirmPassword) {
-      alert("Passwords Must Match");
+      toast({
+        title: "Signup Failed",
+        description: "Passwords Do Not Match.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
       return;
     }
     try {
       const name = firstName + " " + lastName;
       const response = await signup(name, email, password);
       if (response.success) {
-        alert("Email Verification Code Sent");
+        toast({
+          title: "Code sent to email!",
+          status: "success",
+          description: "Please check your email for verification.",
+          duration: 3000,
+          isClosable: true,
+        });
         setShowVerificationCode(true);
       } else {
-
-        alert(response.error);
+        toast({
+          title: "Signup Failed",
+          description: response.error || "Error occured. Please try again.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
       }
     } catch (error) {
       console.error(error.message || "Error occured.");
+
+      toast({
+        title: "Signup Failed",
+        description: "Error occured. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
   return (
-    <Container marginTop={50} color={"gray.200"} height={'container.sm'}>
+    <Container marginTop={50} color={"gray.200"} height={"container.sm"}>
       {showVerificationCode ? (
         <VerificationCode email={email} />
       ) : (

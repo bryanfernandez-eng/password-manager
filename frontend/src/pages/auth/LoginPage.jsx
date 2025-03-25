@@ -8,6 +8,7 @@ import {
   FormLabel,
   Container,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 
 import { Link } from "react-router-dom";
@@ -19,25 +20,50 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useUser();
+  const toast = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
     if (!password || !email) {
-      alert("All Fields Must Be Filled In.");
+      toast({
+        title: "Login Failed",
+        description: "All Fields Must Be Filled In.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
       return;
     }
 
     try {
       const response = await login(email, password);
-      console.log(response)
       if (response.success) {
-        alert("Successful Login");
+        toast({
+          title: "Login Successful",
+          description: "Welcome!",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
         navigate("/");
       } else {
-        alert(response.error);
+        toast({
+          title: "Login Failed",
+          description: response.error || "Invalid credentials",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
       }
     } catch (error) {
-      console.error(error.message || "Error occured.");
+      console.error("Login error:", error);
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
