@@ -1,4 +1,3 @@
-// src/pages/PasswordPage.jsx
 import {
   Box,
   Button,

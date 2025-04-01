@@ -140,7 +140,7 @@ function PasswordEntryModal({
             color="white"
             width={"full"} 
             onClick={handleSave}
-            _hover={{ backgroundColor: "#E5007A" }} // Slightly darker pink on hover
+            _hover={{ backgroundColor: "#E5007A" }} 
             transition="background-color 0.3s"
           >
             Save

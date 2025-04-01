@@ -1,4 +1,3 @@
-// src/pages/auth/Logout.jsx
 import {
   Box,
   Button,
