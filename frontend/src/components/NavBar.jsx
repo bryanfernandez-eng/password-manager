@@ -7,50 +7,68 @@ import {
   IconButton,
   useDisclosure,
   Stack,
+  Button,
+  Container,
+  Divider,
+  Text,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
-import { useLocation } from "react-router-dom";
+import { HamburgerIcon, CloseIcon, LockIcon } from "@chakra-ui/icons";
+import { useLocation, Link as RouterLink } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 
 const Navbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user, loading } = useUser();
-  const location = useLocation(); // Get the current location
+  const location = useLocation();
 
+  // Determine menu links based on user auth state
   const centerLinks = loading
     ? []
     : user
     ? ["Home", "Generate Password", "My Passwords"]
     : ["Home", "Generate Password"];
-  const rightLinks = loading
-    ? []
-    : user
-    ? ["Settings", "Logout"]
-    : ["Signup", "Login"];
 
+  // Function to generate URL paths from link names
+  const generateHref = (linkName) => {
+    if (linkName === "Home") return "/";
+    return `/${linkName.toLowerCase().replace(/\s+/g, "-")}`;
+  };
+
+  // NavLink component for consistent styling
   const NavLink = ({ children }) => {
-    // Generate the href dynamically
-    const generateHref = (linkName) => {
-      if (linkName === "Home") return "/";
-      return `/${linkName.toLowerCase().replace(/\s+/g, "-")}`;
-    };
-
     const href = generateHref(children);
-    const isActive = location.pathname === href; // Check if the current route matches the href
+    const isActive = location.pathname === href;
 
     return (
       <Link
-        px={2}
-        py={1}
-        rounded={"md"}
-        href={href}
-        bg={isActive ? "rgba(203, 213, 224, 0.6)" : "transparent"} // Highlight active link
-        color={isActive ? "gray.800" : "gray.300"} // Change text color for active link
+        as={RouterLink}
+        to={href}
+        px={3}
+        py={2}
+        rounded="md"
+        fontWeight="medium"
+        position="relative"
+        color={isActive ? "white" : "flickr.lightGray"}
         _hover={{
           textDecoration: "none",
-          bg: "whiteAlpha.200",
-          color: "whiteAlpha.700",
+          color: "white",
         }}
+        _after={{
+          content: '""',
+          position: "absolute",
+          width: isActive ? "100%" : "0%",
+          height: "1px",
+          bottom: "0",
+          left: "0",
+          bg: "flickr.pink",
+          transition: "all 0.3s ease-in-out",
+        }}
+        _hover={{
+          _after: {
+            width: "100%",
+          },
+        }}
+        transition="all 0.3s"
       >
         {children}
       </Link>
@@ -58,78 +76,223 @@ const Navbar = () => {
   };
 
   return (
-    <Box px={10} marginTop={1}>
-      <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
-        <Link
-          href="/"
-          _hover={{
-            textDecoration: "none",
-          }}
-        >
-          <Box
-            color="gray.300"
-            fontWeight="bold"
-            boxShadow={"dark-sm"}
-            backgroundColor={"rgba(26, 32, 44, 0.8)"}
-            py={1}
-            px={4}
-            fontSize={20}
-            rounded={"md"}
+    <Box as="nav" position="sticky" top="0" zIndex="1000" bg="#222222">
+      <Container maxW="container.xl" px={4}>
+        <Flex h={16} alignItems="center" justifyContent="space-between">
+          {/* Logo */}
+          <Link
+            as={RouterLink}
+            to="/"
             _hover={{
               textDecoration: "none",
-              bgColor: "gray.700",
             }}
+            display="flex"
+            alignItems="center"
           >
-            Password Manager
-          </Box>
-        </Link>
-        <HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
-          {centerLinks.map((link) => (
-            <NavLink key={link}>{link}</NavLink>
-          ))}
-        </HStack>
+            <Flex
+              align="center"
+              color="white"
+              fontWeight="bold"
+              fontSize={20}
+              gap={3}
+            >
+              <Box
+                bg="flickr.blue"
+                py={1}
+                px={4}
+                borderRadius="md"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                transition={"background-color 0.5s ease-in-out"}
+                _hover={{
+                  backgroundColor: "flickr.pink",
+                }}
+                gap={3}
+              >
+                <LockIcon boxSize={4} />
+                <Text letterSpacing="wide">Password Manager</Text>
+              </Box>
+            </Flex>
+          </Link>
 
-        <HStack
-          as={"nav"}
-          spacing={4}
-          display={{ base: "none", md: "flex" }}
-          color="gray.300"
-        >
-          {rightLinks.map((link) => (
-            <NavLink key={link}>{link}</NavLink>
-          ))}
-        </HStack>
-
-        {/* Mobile Menu Toggle */}
-        <IconButton
-          size={"md"}
-          icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-          aria-label={"Toggle Navigation"}
-          display={{ md: "none" }}
-          bg={"none"}
-          color={"whiteAlpha.900"}
-          _hover={{
-            backgroundColor: "whiteAlpha.100",
-          }}
-          onClick={isOpen ? onClose : onOpen}
-        />
-      </Flex>
-
-      {/* Mobile Menu */}
-      {isOpen ? (
-        <Box pb={4} display={{ md: "none" }}>
-          <Stack color="whiteAlpha.900" as={"nav"} spacing={4}>
+          {/* Center Nav Menu - Desktop */}
+          <HStack
+            as="nav"
+            spacing={6}
+            display={{ base: "none", md: "flex" }}
+            ml={10}
+          >
             {centerLinks.map((link) => (
               <NavLink key={link}>{link}</NavLink>
             ))}
-            <HStack color="whiteAlpha.900" as={"nav"} spacing={10}>
-              {rightLinks.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
+          </HStack>
+
+          {/* Right section - Desktop */}
+          <HStack spacing={4} display={{ base: "none", md: "flex" }}>
+            {!loading &&
+              (!user ? (
+                <>
+                  <Button
+                    as={RouterLink}
+                    to="/login"
+                    fontSize="sm"
+                    fontWeight={500}
+                    variant="outline"
+                    color="flickr.lightGray"
+                    borderColor="flickr.lightGray"
+                    borderWidth="1px"
+                    _hover={{
+                      borderColor: "flickr.pink",
+                      color: "flickr.pink",
+                    }}
+                    size="sm"
+                  >
+                    Login
+                  </Button>
+                  <Button
+                    as={RouterLink}
+                    to="/signup"
+                    fontSize="sm"
+                    fontWeight={500}
+                    bg="flickr.pink"
+                    color="white"
+                    borderWidth="0"
+                    transition={"background-color 0.5s ease-in-out"}
+                    _hover={{
+                      bg: "flickr.blue",
+                    }}
+                    size="sm"
+                  >
+                    Sign Up
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    as={RouterLink}
+                    to="/settings"
+                    fontSize="sm"
+                    variant="ghost"
+                    color="flickr.lightGray"
+                    _hover={{
+                      color: "white",
+                    }}
+                    size="sm"
+                  >
+                    Settings
+                  </Button>
+                  <Button
+                    as={RouterLink}
+                    to="/logout"
+                    fontSize="sm"
+                    variant="ghost"
+                    color="flickr.lightGray"
+                    _hover={{
+                      color: "white",
+                    }}
+                    size="sm"
+                  >
+                    Logout
+                  </Button>
+                </>
               ))}
-            </HStack>
-          </Stack>
-        </Box>
-      ) : null}
+          </HStack>
+
+          {/* Mobile menu button */}
+          <IconButton
+            size="md"
+            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+            aria-label="Toggle Navigation"
+            display={{ md: "none" }}
+            variant="ghost"
+            color="white"
+            _hover={{
+              bg: "whiteAlpha.200",
+            }}
+            onClick={isOpen ? onClose : onOpen}
+          />
+        </Flex>
+
+        {/* Mobile Nav Menu */}
+        {isOpen && (
+          <Box pb={4} display={{ md: "none" }}>
+            <Stack as="nav" spacing={2} pt={2} pb={4}>
+              {centerLinks.map((link) => (
+                <Link
+                  key={link}
+                  as={RouterLink}
+                  to={generateHref(link)}
+                  px={3}
+                  py={2}
+                  rounded="md"
+                  fontWeight="medium"
+                  color="white"
+                  _hover={{
+                    bg: "whiteAlpha.200",
+                  }}
+                  onClick={onClose}
+                >
+                  {link}
+                </Link>
+              ))}
+              <Divider borderColor="gray.700" my={2} />
+
+              {!loading &&
+                (!user ? (
+                  <Flex gap={4} px={3}>
+                    <Button
+                      as={RouterLink}
+                      to="/login"
+                      width="50%"
+                      fontSize="sm"
+                      color="flickr.lightGray"
+                      variant="outline"
+                      onClick={onClose}
+                    >
+                      Login
+                    </Button>
+                    <Button
+                      as={RouterLink}
+                      to="/signup"
+                      width="50%"
+                      fontSize="sm"
+                      bg="flickr.pink"
+                      onClick={onClose}
+                    >
+                      Sign Up
+                    </Button>
+                  </Flex>
+                ) : (
+                  <>
+                    <Link
+                      as={RouterLink}
+                      to="/settings"
+                      px={3}
+                      py={2}
+                      rounded="md"
+                      color="flickr.lightGray"
+                      onClick={onClose}
+                    >
+                      Settings
+                    </Link>
+                    <Link
+                      as={RouterLink}
+                      to="/logout"
+                      px={3}
+                      py={2}
+                      rounded="md"
+                      color="flickr.lightGray"
+                      onClick={onClose}
+                    >
+                      Logout
+                    </Link>
+                  </>
+                ))}
+            </Stack>
+          </Box>
+        )}
+      </Container>
     </Box>
   );
 };
