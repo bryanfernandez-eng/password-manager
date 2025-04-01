@@ -48,17 +48,18 @@ function PasswordEntryModal({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent
-        backgroundColor="rgba(26, 32, 44, 0.95)"
-        color="gray.200"
+        backgroundColor="flickr.darkGray" 
+        color="flickr.lightGray"
         padding={5}
         borderRadius={"xl"}
+        boxShadow="0 4px 20px rgba(0, 0, 0, 0.5)"
       >
           <ModalHeader>
             {currentPassword ? 
               (currentPassword.originalSiteName ? "Edit Password" : "Add New Password") 
               : "Add New Password"}
           </ModalHeader>
-          <ModalCloseButton m={6} />
+          <ModalCloseButton m={6} color="flickr.lightGray" />
         <ModalBody>
           <FormControl mb={4}>
             <FormLabel>Site Name</FormLabel>
@@ -71,6 +72,9 @@ function PasswordEntryModal({
                 }))
               }
               placeholder="Enter site name"
+              borderColor="gray.600"
+              _hover={{ borderColor: "flickr.pink" }}
+              _focus={{ borderColor: "flickr.pink", boxShadow: "0 0 0 1px #FF0084" }}
             />
           </FormControl>
           <FormControl mb={4}>
@@ -84,6 +88,9 @@ function PasswordEntryModal({
                 }))
               }
               placeholder="Enter site URL"
+              borderColor="gray.600"
+              _hover={{ borderColor: "flickr.pink" }}
+              _focus={{ borderColor: "flickr.pink", boxShadow: "0 0 0 1px #FF0084" }}
             />
           </FormControl>
           <FormControl mb={4}>
@@ -98,6 +105,9 @@ function PasswordEntryModal({
                 }))
               }
               placeholder="Enter email"
+              borderColor="gray.600"
+              _hover={{ borderColor: "flickr.pink" }}
+              _focus={{ borderColor: "flickr.pink", boxShadow: "0 0 0 1px #FF0084" }}
             />
           </FormControl>
           <FormControl mb={2}>
@@ -112,6 +122,9 @@ function PasswordEntryModal({
                 }))
               }
               placeholder="Enter password"
+              borderColor="gray.600"
+              _hover={{ borderColor: "flickr.pink" }}
+              _focus={{ borderColor: "flickr.pink", boxShadow: "0 0 0 1px #FF0084" }}
             />
           </FormControl>
           
@@ -122,7 +135,14 @@ function PasswordEntryModal({
         </ModalBody>
 
         <ModalFooter justifyContent={"center"}>
-          <Button colorScheme="blue" width={"full"} onClick={handleSave}>
+          <Button 
+            backgroundColor="flickr.pink"
+            color="white"
+            width={"full"} 
+            onClick={handleSave}
+            _hover={{ backgroundColor: "#E5007A" }} // Slightly darker pink on hover
+            transition="background-color 0.3s"
+          >
             Save
           </Button>
         </ModalFooter>
