@@ -108,10 +108,17 @@ const PasswordStrengthMeter = ({ password, showCriteria = true }) => {
     setStrength(newStrength);
   }, [password]);
 
+  const getProgressColor = (score) => {
+    if (score < 30) return 'red.500';
+    if (score < 60) return 'orange.400';
+    if (score < 80) return 'yellow.400';
+    return 'flickr.blue';
+  };
+
   return (
     <VStack spacing={2} width="100%" align="stretch">
       <HStack justifyContent="space-between">
-        <Text fontSize="sm" color="gray.300">
+        <Text fontSize="sm" color="flickr.lightGray">
           Password Strength:
         </Text>
         <Text fontSize="sm" color={strength.color} fontWeight="bold">
@@ -125,10 +132,11 @@ const PasswordStrengthMeter = ({ password, showCriteria = true }) => {
           strength.score < 30 ? 'red' 
           : strength.score < 60 ? 'orange' 
           : strength.score < 80 ? 'yellow' 
-          : 'green'
+          : 'blue' // Use blue (Flickr blue) for strong passwords
         }
         size="sm"
         borderRadius="md"
+        bg="gray.700"
       />
       
       {showCriteria && (
@@ -137,37 +145,37 @@ const PasswordStrengthMeter = ({ password, showCriteria = true }) => {
             <ListItem display="flex" alignItems="center">
               <ListIcon 
                 as={criteria.length ? CheckIcon : CloseIcon} 
-                color={criteria.length ? 'green.400' : 'red.400'} 
+                color={criteria.length ? 'flickr.blue' : 'red.400'} 
               />
-              <Text color="gray.300">At least 8 characters</Text>
+              <Text color="flickr.lightGray">At least 8 characters</Text>
             </ListItem>
             <ListItem display="flex" alignItems="center">
               <ListIcon 
                 as={criteria.uppercase ? CheckIcon : CloseIcon} 
-                color={criteria.uppercase ? 'green.400' : 'red.400'} 
+                color={criteria.uppercase ? 'flickr.blue' : 'red.400'} 
               />
-              <Text color="gray.300">Contains uppercase letter</Text>
+              <Text color="flickr.lightGray">Contains uppercase letter</Text>
             </ListItem>
             <ListItem display="flex" alignItems="center">
               <ListIcon 
                 as={criteria.lowercase ? CheckIcon : CloseIcon} 
-                color={criteria.lowercase ? 'green.400' : 'red.400'} 
+                color={criteria.lowercase ? 'flickr.blue' : 'red.400'} 
               />
-              <Text color="gray.300">Contains lowercase letter</Text>
+              <Text color="flickr.lightGray">Contains lowercase letter</Text>
             </ListItem>
             <ListItem display="flex" alignItems="center">
               <ListIcon 
                 as={criteria.number ? CheckIcon : CloseIcon} 
-                color={criteria.number ? 'green.400' : 'red.400'} 
+                color={criteria.number ? 'flickr.blue' : 'red.400'} 
               />
-              <Text color="gray.300">Contains number</Text>
+              <Text color="flickr.lightGray">Contains number</Text>
             </ListItem>
             <ListItem display="flex" alignItems="center">
               <ListIcon 
                 as={criteria.special ? CheckIcon : CloseIcon} 
-                color={criteria.special ? 'green.400' : 'red.400'} 
+                color={criteria.special ? 'flickr.blue' : 'red.400'} 
               />
-              <Text color="gray.300">Contains special character</Text>
+              <Text color="flickr.lightGray">Contains special character</Text>
             </ListItem>
           </List>
         </Box>
