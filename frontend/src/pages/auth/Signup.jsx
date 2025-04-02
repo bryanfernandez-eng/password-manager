@@ -109,7 +109,7 @@ function SignupPage() {
 
   if (showVerificationCode) {
     return (
-      <Container centerContent pt={{ base: 10, md: 16 }} color="flickr.lightGray">
+      <Container centerContent pt={{ base: 10, md: 16 }} pb={20} color="flickr.lightGray">
         <MotionBox
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
