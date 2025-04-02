@@ -2,6 +2,8 @@ import express from "express";
 import "dotenv/config";
 import authRouter from "./routes/auth.route.js";
 import passwordRouter from "./routes/password.route.js";
+import resetRouter from "./routes/reset.route.js"; 
+import chatRouter from "./routes/chatbot.route.js"
 
 import cors from "cors";
 import helmet from "helmet"
@@ -34,6 +36,8 @@ app.use(cors({
 // API routes setup
 app.use("/api/auth", authRouter);         // Authentication routes
 app.use("/api/password", passwordRouter)  // Password manager routes
+app.use("/api/auth", resetRouter); // Reset password routes
+app.use("/api/chatbot", chatRouter) // Chatbot routes
 
 // Start the server and connect to database
 app.listen(PORT, () => {
