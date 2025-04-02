@@ -29,16 +29,6 @@ function HomePage() {
   const isMobile = useBreakpointValue({ base: true, md: false });
   const toast = useToast();
 
-  // Re-fetch user data when the component mounts
-  useEffect(() => {
-    // If we don't have user data but we're not in loading state
-    if (!loading && !user) {
-      checkAuth().catch((error) => {
-        console.error("Error checking auth:", error);
-      });
-    }
-  }, [loading, user, checkAuth]);
-
   if (loading) {
     return (
       <Flex justify="center" align="center" height="70vh">
