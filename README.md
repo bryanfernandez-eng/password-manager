@@ -45,7 +45,6 @@ This password manager application allows users to securely store, generate, and 
 - **Input Validation**: Server-side validation for all user inputs
 - **Protection Against Common Attacks**: XSS, CSRF, injection attacks
 
-## 🛠️ Tech Stack
 
 ## 🛠️ Tech Stack
 
