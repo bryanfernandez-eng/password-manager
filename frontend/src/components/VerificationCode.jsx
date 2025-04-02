@@ -8,6 +8,7 @@ import {
   Input,
   HStack,
   Button,
+  useToast
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
@@ -16,6 +17,7 @@ function VerificationCode({ email }) {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const navigate = useNavigate();
   const { verifyCode } = useUser();
+  const toast = useToast();
 
   const handleChange = (index, value) => {
     const digit = value.replace(/[^0-9]/g, "").slice(0, 1);
@@ -50,30 +52,53 @@ function VerificationCode({ email }) {
 
   const handleSubmit = async () => {
     const verificationCode = code.join("");
-    if (verificationCode.length != 6) {
-      alert("Six digits must be entered.");
+    if (verificationCode.length !== 6) {
+      toast({
+        title: "Invalid Code",
+        description: "Six digits must be entered.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
       return;
     }
 
     try {
       const response = await verifyCode(email, verificationCode);
       if (response.success) {
-        alert("Successful Registration.");
+        toast({
+          title: "Verification Successful",
+          description: "Your account has been successfully registered.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
         navigate("/");
         return;
       }
-      alert(response.error);
-      return;
+      toast({
+        title: "Verification Failed",
+        description: response.error || "Invalid verification code.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     } catch (error) {
-      alert("Error:", error.message);
+      toast({
+        title: "Error",
+        description: error.message || "Something went wrong. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
   return (
     <Container
-    boxShadow={"dark-sm"}
-    backgroundColor={"rgba(26, 32, 44, 0.5)"}
-    color={"gray.300"}
+      boxShadow={"dark-sm"}
+      backgroundColor={"rgba(26, 32, 44, 0.5)"}
+      color={"gray.300"}
       padding={10}
       rounded={"lg"}
     >
@@ -104,13 +129,26 @@ function VerificationCode({ email }) {
               onPaste={handlePaste}
               maxWidth="70px"
               textAlign="center"
-              focusBorderColor="gray.500"
+              focusBorderColor="flickr.pink"
+              bg="rgba(34, 34, 34, 0.8)"
+              borderColor="gray.600"
+              _hover={{ borderColor: "flickr.pink" }}
             />
           ))}
         </HStack>
-        <Button width={"full"} onClick={handleSubmit}>
-          Submit
+        <Button 
+          width={"full"} 
+          onClick={handleSubmit}
+          bg="flickr.pink"
+          color="white"
+          _hover={{ bg: "#E5007A" }}
+          transition="background-color 0.3s"
+        >
+          Verify
         </Button>
+        <Text fontSize="sm" color="gray.500" textAlign="center">
+          Didn't receive a code? Check your spam folder or contact support.
+        </Text>
       </Flex>
     </Container>
   );

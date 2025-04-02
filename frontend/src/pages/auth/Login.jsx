@@ -14,7 +14,6 @@ import {
   InputRightElement,
   IconButton,
   useBreakpointValue,
-  Image
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -22,7 +21,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import { ViewIcon, ViewOffIcon, LockIcon } from "@chakra-ui/icons";
 
-// Wrapper component with animation
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
 
@@ -34,7 +32,7 @@ function LoginPage() {
   const { login } = useUser();
   const toast = useToast();
   const navigate = useNavigate();
-  
+
   // Responsive adjustments
   const padding = useBreakpointValue({ base: 6, md: 8 });
   const width = useBreakpointValue({ base: "90%", sm: "400px" });
@@ -87,7 +85,7 @@ function LoginPage() {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleSubmit();
     }
   };
@@ -97,19 +95,19 @@ function LoginPage() {
       <MotionBox
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.9 }}
         width={width}
         maxWidth="450px"
       >
-        <MotionFlex 
+        <MotionFlex
           direction="column"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          align="center" 
+          align="center"
           mb={6}
         >
-          <Box 
+          <Box
             as={motion.div}
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
@@ -118,8 +116,15 @@ function LoginPage() {
           >
             <LockIcon boxSize={12} color="flickr.pink" />
           </Box>
-          <Heading size="xl" mb={2}>Sign In</Heading>
-          <Text color="flickr.lightGray" opacity={0.7} fontSize="sm" textAlign="center">
+          <Heading size="xl" mb={2}>
+            Sign In
+          </Heading>
+          <Text
+            color="flickr.lightGray"
+            opacity={0.7}
+            fontSize="sm"
+            textAlign="center"
+          >
             Enter your credentials to access your vault
           </Text>
         </MotionFlex>
@@ -168,7 +173,9 @@ function LoginPage() {
                     variant="ghost"
                     size="sm"
                     onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                     color="whiteAlpha.700"
                     _hover={{ color: "flickr.pink" }}
                   />
@@ -194,21 +201,26 @@ function LoginPage() {
             Sign In
           </Button>
 
-          <Flex justifyContent="space-between" alignItems="center" fontSize="sm" mt={3}>
-            <Text 
-              as={Link} 
-              to="/forgot-password" 
-              color="flickr.lightGray" 
+          <Flex
+            justifyContent="space-between"
+            alignItems="center"
+            fontSize="sm"
+            mt={3}
+          >
+            <Text
+              as={Link}
+              to="/forgot-password"
+              color="flickr.lightGray"
               _hover={{ color: "flickr.pink" }}
               opacity={0.8}
               fontSize="sm"
             >
               Forgot password?
             </Text>
-            <Text 
-              as={Link} 
-              to="/signup" 
-              color="flickr.blue" 
+            <Text
+              as={Link}
+              to="/signup"
+              color="flickr.blue"
               _hover={{ color: "flickr.pink" }}
               fontSize="sm"
             >
@@ -217,12 +229,12 @@ function LoginPage() {
           </Flex>
         </Box>
 
-        <Box 
+        <Box
           as={motion.div}
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.8 }}
           transition={{ delay: 0.6, duration: 0.5 }}
-          mt={8} 
+          mt={8}
           textAlign="center"
         >
           <Text fontSize="xs" color="flickr.lightGray" opacity={0.6}>
