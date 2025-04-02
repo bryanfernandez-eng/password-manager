@@ -61,7 +61,7 @@ const Navbar = () => {
           bottom: "0",
           left: "0",
           bg: "flickr.pink",
-          transition: "all 0.3s ease-in-out",
+          transition: "all 0.7s ease-in-out",
         }}
         _hover={{
           _after: {
@@ -94,11 +94,11 @@ const Navbar = () => {
               color="white"
               fontWeight="bold"
               fontSize={20}
-              gap={3}
+              gap={6}
             >
               <Box
                 bg="flickr.blue"
-                py={1}
+                py={.5}
                 px={4}
                 borderRadius="md"
                 display="flex"
