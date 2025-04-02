@@ -26,6 +26,7 @@ const MotionFlex = motion(Flex);
 
 function LoginPage() {
   const [email, setEmail] = useState("");
+  
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -91,7 +92,7 @@ function LoginPage() {
   };
 
   return (
-    <Container centerContent pt={{ base: 10, md: 16 }} maxW="container.md">
+    <Container centerContent pt={{ base: 10, md: 16 }} pb={20} maxW="container.md">
       <MotionBox
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
