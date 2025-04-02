@@ -1,3 +1,5 @@
+
+
 # 🔐 Secure Password Manager
 
 A comprehensive full-stack password management application built with the MERN stack (MongoDB, Express, React, Node.js).
@@ -45,29 +47,15 @@ This password manager application allows users to securely store, generate, and 
 
 ## 🛠️ Tech Stack
 
-### Frontend
-- **React 18**: Modern component-based UI architecture
-- **React Router DOM 7**: Client-side routing with protected routes
-- **Chakra UI**: Accessible and responsive component library
-- **Framer Motion**: Smooth animations and transitions
-- **Axios**: HTTP client for API communication
-- **Context API**: Global state management
+## 🛠️ Tech Stack
 
-### Backend
-- **Node.js & Express**: Fast, minimalist web framework
-- **MongoDB & Mongoose**: NoSQL database with schema modeling
-- **JWT**: JSON Web Tokens for stateless authentication
-- **Bcrypt**: Password hashing and verification
-- **Crypto**: AES-256-CBC encryption for stored passwords
-- **Nodemailer**: Email services for verification and password reset
-- **OpenAI API**: Integration for AI-powered chatbot assistant
+| Category | Technologies |
+|----------|-------------|
+| **Frontend** | React 18, React Router DOM 7, Chakra UI, Framer Motion, Axios, Context API |
+| **Backend** | Node.js, Express, MongoDB, Mongoose, JWT, Bcrypt, Crypto, Nodemailer, OpenAI API |
+| **DevOps & Tooling** | Vite, ESLint, dotenv, Helmet, CORS |
+| **Security** | JWT with HTTP-only cookies, AES-256-CBC encryption, Bcrypt password hashing |
 
-### DevOps & Tooling
-- **Vite**: Next-generation frontend build tool
-- **ESLint**: Code quality and style consistency
-- **dotenv**: Environment variable management
-- **Helmet**: Security headers configuration
-- **CORS**: Cross-Origin Resource Sharing protection
 
 ## 📥 Installation
 
