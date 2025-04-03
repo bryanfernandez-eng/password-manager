@@ -20,7 +20,7 @@ export const sendVerifcationEmail = async (verificationCode, email) => {
         <h2 style="color: #FF0084;">Password Reset</h2>
         <p>You requested to reset your password. Use the code below to complete the process:</p>
         <div style="background-color: #f7f7f7; padding: 15px; border-radius: 4px; text-align: center; margin: 20px 0;">
-          <h3 style="margin: 0; font-size: 24px; letter-spacing: 3px;">${resetCode}</h3>
+          <h3 style="margin: 0; font-size: 24px; letter-spacing: 3px;">${verificationCode}</h3>
         </div>
         <p>This code will expire in <strong>5 minutes</strong>.</p>
     </div>
