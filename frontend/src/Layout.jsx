@@ -18,6 +18,7 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import ChatbotWidget from "./components/ChatBot/ChatBotWidget";
 import { Box, Flex } from "@chakra-ui/react";
 import Footer from "./components/Footer";
+import Settings from "./pages/Settings";
 
 function App() {
   const location = useLocation();
@@ -28,7 +29,7 @@ function App() {
       <ChakraProvider theme={theme}>
         <Flex direction={"column"} minHeight={"100vh"}>
           <NavBar />
-          <ChatbotWidget />
+          {/* <ChatbotWidget /> */}
           <Box flex={1}>
             <Routes>
               <Route path="/" element={<HomePage />} />
@@ -42,6 +43,7 @@ function App() {
               <Route element={<ProtectedRoute />}>
                 <Route path="/my-passwords" element={<PasswordPage />} />
                 <Route path="/logout" element={<Logout />} />
+                <Route path="/settings" element={<Settings />} />
               </Route>
               <Route path="/temp" element={<TempPage />} />{" "}
               {/* Deleting Later */}
